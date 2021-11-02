@@ -1,13 +1,14 @@
 const express = require('express');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, './config/.env') });
 
-const dotenv = require('dotenv');
 const morgan = require('morgan');
 const cors = require('cors');
+const passportSetup = require('./config/passport-setup');
 
 //router imports
+const oauthRouter = require('./routers/oauthRouter');
 const userRouter = require('./routers/userRouter');
-
-dotenv.config('./config/env');
 
 const app = express();
 
@@ -16,7 +17,10 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
+// passport
+
 // routes
-app.use('/api/user', userRouter);
+app.use('/oauth', oauthRouter);
+app.use('/user', userRouter);
 
 module.exports = app;
