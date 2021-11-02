@@ -8,9 +8,17 @@ passport.use(
       callbackURL: '/oauth/kakao/callback',
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
     },
-    (accessToken, refreshToken, profile, done) => {
-      console.log(accessToken);
-      console.log(profile);
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // accessToken으로 사용자를 찾고, 못찾는다면 사용자 생성
+        const test = {
+          msg: 'logged in',
+          token: accessToken,
+        };
+        done(null, test);
+      } catch (error) {
+        done(error);
+      }
     }
   )
 );
