@@ -4,7 +4,7 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 passport.use(
   new KakaoStrategy(
     {
-      clientID: process.env.KAKAO_RESTAPI_KEY, // REST API key
+      clientID: process.env.KAKAO_RESTAPI_KEY,
       callbackURL: '/oauth/kakao/callback',
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
     },
