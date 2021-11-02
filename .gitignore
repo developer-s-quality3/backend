@@ -122,4 +122,4 @@ dist
 .pnp.*
 
 # config folder
-config
+config/.env
