@@ -2,32 +2,24 @@ const db = require('../db/index');
 
 // 예제
 class User {
-  constructor(username, password) {
-    this.username = username;
-    this.password = password;
+  constructor(kakaoId, kakaoToken) {
+    this.kakaoId = kakaoId;
+    this.kakaoToken = kakaoToken;
   }
-  signUp() {
-    let d = new Date();
-    let yyyy = d.getFullYear();
-    let mm = d.getMonth() + 1;
-    let dd = d.getDate();
-    let createdAtDate = `${yyyy}-${mm}-${dd}`;
-
+  save() {
     let sql = `
     INSERT INTO user(
-      username,
-      password,
-      created_at
+      kakaoId,
+      kakaoToken,
     )
     VALUES(
-      "${this.userName}",
-      "${this.password}",
-      "${createdAtDate}"
+      "${this.kakaoId}",
+      "${this.kakaoToken}",
+
     )
     `;
-
-    // 아마도 디스트럭처링 해야할듯
     const newUser = db.execute(sql);
+    console.log(newUser);
     return newUser;
   }
 }

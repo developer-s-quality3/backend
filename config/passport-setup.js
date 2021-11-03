@@ -1,26 +1,33 @@
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
+const User = require('../models/User');
+
+passport.serializeUser((user, done) => {
+  done(null, user.username);
+});
+
+passport.deserializeUser((id, done) => {});
 
 passport.use(
+  'kakao-login',
   new KakaoStrategy(
     {
       clientID: process.env.KAKAO_RESTAPI_KEY,
-      callbackURL: 'http://localhost:5000/oauth/kakao/callback',
+      callbackURL: process.env.KAKAO_CALLBACK_URI,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
     },
     async (accessToken, refreshToken, profile, done) => {
-      try {
-        console.log('dddddddddddddddd');
-        // accessToken으로 사용자를 찾고, 못찾는다면 사용자 생성
-        const test = {
-          msg: 'logged in',
-          token: accessToken,
-        };
-        done(null, test);
-      } catch (error) {
-        console.log('error');
-        done(error);
-      }
+      console.log(profile.id);
+
+      const user = new User(profile.id, accessToken);
+
+      // try {
+
+      //   done(null, test);
+      // } catch (error) {
+      //   console.log('error');
+      //   done(error, false);
+      // }
     }
   )
 );
