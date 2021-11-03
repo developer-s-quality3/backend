@@ -1,27 +1,48 @@
-const db = require('../db/index');
+const Sequelize = require('sequelize');
+const sequelize = require('../db/sequelize');
 
-// 예제
-class User {
-  constructor(kakaoId, kakaoToken) {
-    this.kakaoId = kakaoId;
-    this.kakaoToken = kakaoToken;
-  }
-  save() {
-    let sql = `
-    INSERT INTO user(
-      kakaoId,
-      kakaoToken,
-    )
-    VALUES(
-      "${this.kakaoId}",
-      "${this.kakaoToken}",
-
-    )
-    `;
-    const newUser = db.execute(sql);
-    console.log(newUser);
-    return newUser;
-  }
-}
+const User = sequelize.define('user', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  kakaoId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  kakaoToken: {
+    type: Sequelize.CHAR(60),
+    allowNull: true,
+  },
+  sinceDate: {
+    type: Sequelize.DATE,
+  },
+  penName: {
+    type: Sequelize.CHAR(20),
+  },
+  writerApproveDate: {
+    type: Sequelize.DATE,
+  },
+  writerIntro: {
+    type: Sequelize.CHAR(255),
+  },
+  writerProfile: {
+    type: Sequelize.CHAR(255),
+  },
+  companyName: {
+    type: Sequelize.CHAR(50),
+  },
+  companyNum: {
+    type: Sequelize.CHAR(20),
+  },
+  companyApproveDate: {
+    type: Sequelize.DATE,
+  },
+  companyProfile: {
+    type: Sequelize.CHAR(255),
+  },
+});
 
 module.exports = User;

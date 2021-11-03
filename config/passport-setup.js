@@ -3,10 +3,13 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
-  done(null, user.username);
+  console.log(user);
+  done(null, user);
 });
 
-passport.deserializeUser((id, done) => {});
+passport.deserializeUser((id, done) => {
+  done(null, id);
+});
 
 passport.use(
   'kakao-login',
@@ -17,17 +20,21 @@ passport.use(
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log(profile.id);
-
-      const user = new User(profile.id, accessToken);
-
-      // try {
-
-      //   done(null, test);
-      // } catch (error) {
-      //   console.log('error');
-      //   done(error, false);
-      // }
+      try {
+        const user = await User.findOne({ where: { kakaoId: profile.id } });
+        // console.log(user.dataValues.kakaoId);
+        if (user) {
+          done(null, user.dataValues.id);
+        } else {
+          const newUser = await User.create({
+            kakaoId: profile.id,
+            kakaoToken: accessToken,
+          });
+          done(null, newUser);
+        }
+      } catch (error) {
+        done(error, false);
+      }
     }
   )
 );

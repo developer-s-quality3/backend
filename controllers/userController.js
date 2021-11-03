@@ -1,5 +1,3 @@
-// 비지니스 로직 관리
-// import DB
 const User = require('../models/User');
 
 const createUser = async (req, res) => {

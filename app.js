@@ -8,7 +8,12 @@ const passport = require('passport');
 const session = require('express-session');
 const passportSetup = require('./config/passport-setup');
 
+const sequelize = require('./db/sequelize');
+
 const app = express();
+
+// DB connection
+require('./db/sequelize');
 
 // middlewares
 app.use(
