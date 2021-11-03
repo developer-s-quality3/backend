@@ -3,12 +3,14 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
-  console.log(user);
-  done(null, user);
+  // console.log(user.id, user.kakaoId);
+  done(null, user.kakaoId);
 });
 
-passport.deserializeUser((id, done) => {
-  done(null, id);
+passport.deserializeUser( async (kakaoId, done) => {
+  // console.log(kakaoId);
+   const user = await User.findOne({ where: { kakaoId } });
+  done(null, user);
 });
 
 passport.use(
@@ -22,9 +24,9 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         const user = await User.findOne({ where: { kakaoId: profile.id } });
-        // console.log(user.dataValues.kakaoId);
+
         if (user) {
-          done(null, user.dataValues.id);
+          done(null, user);
         } else {
           const newUser = await User.create({
             kakaoId: profile.id,

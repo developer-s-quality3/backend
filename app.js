@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(
   session({
     secret: 'secret',
-    resave: true,
+    resave: false,
     saveUninitialized: true,
   })
 );
