@@ -1,15 +1,27 @@
 const { verifyJWT, signJWT } = require('../utils/jwt.utils');
-const User = require('../models/User')
+const User = require('../models/User');
+
 //create user
-export function createUserHandler(req, res) {
+async function createUserHandler(req, res) {
   const { email, name, password } = req.body;
 
-  //check if email exist
-  const emailExist = await User.
+  try {
+    //check if email exist
+    const checkEmailExist = await User.findOne({ where: { email } });
+    console.log(checkEmailExist);
+    if (checkEmailExist) {
+      return res.status(400).send({ success: false, message: 'email in use' });
+    }
+
+    const newUser = await User.create({ email, password, name });
+    res.send({ success: true, user: newUser });
+  } catch (error) {
+    throw new Error(error);
+  }
 }
 
 //login handler
-export function createSessionHandler(req, res) {
+function createSessionHandler(req, res) {
   const { email, password } = req.body;
 
   const user = getUser(email);
@@ -37,3 +49,8 @@ export function createSessionHandler(req, res) {
 //get the session session
 
 //log out handler
+
+module.exports = {
+  createUserHandler,
+  createSessionHandler,
+};

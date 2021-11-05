@@ -6,9 +6,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 const passport = require('passport');
 const session = require('express-session');
-const passportSetup = require('./config/passport-setup');
-
-const sequelize = require('./db/sequelize');
 
 const app = express();
 
@@ -37,10 +34,12 @@ app.use(passport.session());
 
 //router imports
 const oauthRouter = require('./routers/oauthRouter');
+const authRouter = require('./routers/auth');
 const userRouter = require('./routers/userRouter');
 
 // routes
 app.use('/oauth', oauthRouter);
+app.use('/auth', authRouter);
 app.use('/user', userRouter);
 
 module.exports = app;
