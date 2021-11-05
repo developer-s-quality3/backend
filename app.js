@@ -1,11 +1,11 @@
 const express = require('express');
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, './config/.env') });
 
 const morgan = require('morgan');
 const cors = require('cors');
-const passport = require('passport');
-const session = require('express-session');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, './config/.env') });
+const cookieParser = require('cookie-parser');
+const { deserializeUser } = require('./middleware/deserializeUser');
 
 const app = express();
 
@@ -13,32 +13,22 @@ const app = express();
 require('./db/sequelize');
 
 // middlewares
+app.use(cookieParser());
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(deserializeUser);
 app.use(
   cors({
     origin: 'http://localhost:8080',
     credentials: true,
   })
 );
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(
-  session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: true,
-  })
-);
-// passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 //router imports
-const oauthRouter = require('./routers/oauthRouter');
 const authRouter = require('./routers/auth');
 const userRouter = require('./routers/userRouter');
 
 // routes
-app.use('/oauth', oauthRouter);
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 
