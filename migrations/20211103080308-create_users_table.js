@@ -9,13 +9,46 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
       },
-      kakaoId: {
-        type: Sequelize.INTEGER,
+      userType: {
+        type: Sequelize.ENUM('user', 'creator', 'company', 'admin'),
+        defaultValue: 'user',
+      },
+      name: {
+        type: Sequelize.CHAR(50),
         allowNull: false,
       },
-      kakaoToken: {
-        type: Sequelize.CHAR(60),
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      phoneNumber: {
+        type: Sequelize.CHAR(20),
         allowNull: true,
+      },
+      companyContact: {
+        type: Sequelize.CHAR(50),
+        allowNull: true,
+      },
+      accessToken: {
+        type: Sequelize.CHAR(100),
+        allowNull: true,
+      },
+      refreshToken: {
+        type: Sequelize.CHAR(100),
+        allowNull: true,
+      },
+      birthDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      gender: {
+        type: Sequelize.ENUM('man', 'woman', 'none'),
+        defaultValue: 'none',
       },
       sinceDate: {
         type: Sequelize.DATE,
