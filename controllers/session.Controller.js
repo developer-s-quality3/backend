@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const { verifyJWT, signJWT } = require('../utils/jwt.utils');
 const User = require('../models/User');
+const { createSession } = require('../db/session');
 
 //create user
 const createUserHandler = async (req, res) => {
@@ -37,20 +38,32 @@ const createSessionHandler = async (req, res) => {
   }
   const validPassword = await bcrypt.compare(password, user.password);
   if (validPassword) {
-    //create access token
+    const session = createSession(email);
+    //create access & refresh token
     const accessToken = signJWT(
-      { email: user.email, name: user.name, userType: user.userType },
-      '1h'
+      {
+        email: user.email,
+        name: user.name,
+        userType: user.userType,
+        sessionId: session.sessionId,
+      },
+      '5s'
     );
+    const refreshToken = signJWT({ sessionId: session.sessionId }, '1h');
 
     //set access token in cookie
     res.cookie('accessToken', accessToken, {
-      maxAge: 30000,
+      maxAge: 30000, // 5min
+      httpOnly: true,
+    });
+    //set refresh token in cooki
+    res.cookie('refreshToken', refreshToken, {
+      maxAge: 2.628e9, // 1 month
       httpOnly: true,
     });
 
     //send user back
-    return res.send(verifyJWT(accessToken).payload);
+    return res.send(session);
   } else {
     return res.status(401).send('Invalid email or password');
   }

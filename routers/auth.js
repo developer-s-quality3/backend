@@ -6,10 +6,16 @@ const {
   getSessionHandler,
   deleteSessionHandler,
 } = require('../controllers/session.Controller');
+const { requireUser } = require('../middleware/requireUser');
 
-router.post('/session', createSessionHandler);
 router.post('/signup', createUserHandler);
-router.get('/session', getSessionHandler);
-router.delete('/session', deleteSessionHandler);
+// login
+router.post('/session', createSessionHandler);
+
+// get current session
+router.get('/session', requireUser, getSessionHandler);
+
+// logout
+router.delete('/session', requireUser, deleteSessionHandler);
 
 module.exports = router;
