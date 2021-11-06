@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { verifyJWT, signJWT } = require('../utils/jwt.utils');
 const User = require('../models/User');
-const { createSession } = require('../db/session');
+const { createSession, invalidateSession } = require('../db/session');
 
 //create user
 const createUserHandler = async (req, res) => {
@@ -38,25 +38,26 @@ const createSessionHandler = async (req, res) => {
   }
   const validPassword = await bcrypt.compare(password, user.password);
   if (validPassword) {
-    const session = createSession(email);
+    const session = await createSession(email);
+
     //create access & refresh token
     const accessToken = signJWT(
       {
+        sessionId: session.id,
         email: user.email,
         name: user.name,
         userType: user.userType,
-        sessionId: session.sessionId,
       },
       '5s'
     );
-    const refreshToken = signJWT({ sessionId: session.sessionId }, '1h');
+    const refreshToken = signJWT({ sessionId: session.id }, '5m');
 
     //set access token in cookie
     res.cookie('accessToken', accessToken, {
       maxAge: 30000, // 5min
       httpOnly: true,
     });
-    //set refresh token in cooki
+    //set refresh token in cookie
     res.cookie('refreshToken', refreshToken, {
       maxAge: 2.628e9, // 1 month
       httpOnly: true,
@@ -71,17 +72,26 @@ const createSessionHandler = async (req, res) => {
 
 //get the session session
 const getSessionHandler = (req, res) => {
-  console.log(req.user);
+  // console.log(req.user);
   return res.send(req.user);
 };
 
 //log out handler
-const deleteSessionHandler = (req, res) => {
+const deleteSessionHandler = async (req, res) => {
+  const { sessionId } = req.user;
+  console.log(req.user);
   res.cookie('accessToken', '', {
     maxAge: 0,
     httpOnly: true,
   });
-  return res.send({ success: true, message: 'logout success' });
+  res.cookie('refreshToken', '', {
+    maxAge: 0,
+    httpOnly: true,
+  });
+
+  const session = await invalidateSession(sessionId);
+
+  return res.send(session);
 };
 
 module.exports = {

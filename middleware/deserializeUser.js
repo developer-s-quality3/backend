@@ -1,8 +1,9 @@
-const { verifyJWT } = require('../utils/jwt.utils');
+const { getSession } = require('../db/session');
+const User = require('../models/User');
+const { verifyJWT, signJWT } = require('../utils/jwt.utils');
 
-const deserializeUser = (req, res, next) => {
+const deserializeUser = async (req, res, next) => {
   const { accessToken, refreshToken } = req.cookies;
-  console.log(req.cookies);
 
   if (!accessToken) return next();
 
@@ -21,6 +22,30 @@ const deserializeUser = (req, res, next) => {
   if (!refresh) {
     return next();
   }
+
+  const session = await getSession(refresh.sessionId);
+
+  if (!session) {
+    return next();
+  }
+
+  const user = await User.findOne({ where: { email: session.email } });
+  const newAccessToken = signJWT(
+    {
+      sessionId: session.id,
+      email: user.email,
+      name: user.name,
+      userType: user.userType,
+    },
+    '5s'
+  );
+
+  res.cookie('accessToken', newAccessToken, {
+    maxAge: 300000, // 5min
+    httpOnly: true,
+  });
+
+  req.user = verifyJWT(newAccessToken).payload;
 
   return next();
 };

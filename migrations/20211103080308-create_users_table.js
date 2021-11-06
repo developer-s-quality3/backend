@@ -34,10 +34,6 @@ module.exports = {
         type: Sequelize.CHAR(50),
         allowNull: true,
       },
-      accessToken: {
-        type: Sequelize.CHAR(100),
-        allowNull: true,
-      },
       refreshToken: {
         type: Sequelize.CHAR(100),
         allowNull: true,
