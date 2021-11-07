@@ -78,8 +78,11 @@ const getSessionHandler = (req, res) => {
 
 //log out handler
 const deleteSessionHandler = async (req, res) => {
+  const { accessToken, refreshToken } = req.cookies;
+  console.log(accessToken);
+  console.log(refreshToken);
   const { sessionId } = req.user;
-  console.log(req.user);
+
   res.cookie('accessToken', '', {
     maxAge: 0,
     httpOnly: true,

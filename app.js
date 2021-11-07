@@ -27,9 +27,11 @@ app.use(
 //router imports
 const authRouter = require('./routers/auth');
 const userRouter = require('./routers/userRouter');
+const writerRouter = require('./routers/writer.Router');
 
 // routes
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
+app.use('/writer', writerRouter);
 
 module.exports = app;
