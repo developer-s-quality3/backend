@@ -17,6 +17,9 @@ const UserTypeChange = sequelize.define('user_type_change', {
   businesslicenseImgUrl: {
     type: Sequelize.STRING,
   },
+  businesslicenseNumber: {
+    type: Sequelize.CHAR(50),
+  },
   introduction: {
     type: Sequelize.CHAR(255),
   },

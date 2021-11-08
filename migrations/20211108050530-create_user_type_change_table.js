@@ -19,6 +19,9 @@ module.exports = {
       businesslicenseImgUrl: {
         type: Sequelize.STRING,
       },
+      businesslicenseNumber: {
+        type: Sequelize.CHAR(50),
+      },
       introduction: {
         type: Sequelize.CHAR(255),
       },
@@ -40,6 +43,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('user_type_change');
+    await queryInterface.dropTable('user_type_changes');
   },
 };

@@ -56,9 +56,36 @@ const applyWriter = async (req, res) => {
   }
 };
 
+const applyCompany = async (req, res) => {
+  try {
+    const parsedData = JSON.parse(req.body.datas);
+
+    // console.log(parsedData);
+    console.log(req.user);
+
+    let businesslicenseImgUrl;
+
+    if (req.file) {
+      businesslicenseImgUrl = req.file.location;
+    }
+
+    const userTypeChange = await UserTypeChange.create({
+      userId: req.user.userId,
+      businesslicenseImgUrl,
+      companyName: parsedData.companyName,
+      businesslicenseNumber: parsedData.businessLicenseNum,
+    });
+
+    return res.send(userTypeChange);
+  } catch (error) {
+    return res.status(500).send('something went wrong');
+  }
+};
+
 module.exports = {
   readUser,
   updateUser,
   deleteUser,
   applyWriter,
+  applyCompany,
 };
