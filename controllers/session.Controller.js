@@ -44,17 +44,18 @@ const createSessionHandler = async (req, res) => {
     const accessToken = signJWT(
       {
         sessionId: session.id,
+        userId: user.id,
         email: user.email,
         name: user.name,
         userType: user.userType,
       },
-      '5s'
+      '30m'
     );
-    const refreshToken = signJWT({ sessionId: session.id }, '5m');
+    const refreshToken = signJWT({ sessionId: session.id }, '2h');
 
     //set access token in cookie
     res.cookie('accessToken', accessToken, {
-      maxAge: 30000, // 5min
+      maxAge: 300000, // 5min
       httpOnly: true,
     });
     //set refresh token in cookie

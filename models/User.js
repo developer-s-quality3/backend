@@ -91,6 +91,11 @@ const User = sequelize.define(
         delete record.dataValues.password;
       },
     },
+    scopes: {
+      withoutPassword: {
+        attributes: { exclude: ['password'] },
+      },
+    },
   }
 );
 

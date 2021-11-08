@@ -13,9 +13,11 @@ const app = express();
 require('./db/sequelize');
 
 // middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
-app.use(express.json());
+
 app.use(deserializeUser);
 app.use(
   cors({
@@ -25,8 +27,8 @@ app.use(
 );
 
 //router imports
-const authRouter = require('./routers/auth');
-const userRouter = require('./routers/userRouter');
+const authRouter = require('./routers/auth.Router');
+const userRouter = require('./routers/user.Router');
 const writerRouter = require('./routers/writer.Router');
 
 // routes

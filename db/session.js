@@ -13,15 +13,6 @@ const getSession = async (sessionId) => {
 };
 
 const invalidateSession = async (sessionId) => {
-  // Session.findOne({ where: { id: sessionId } }).then((record) => {
-  //   record.update({ valid: false }).then((record) => {
-  //     console.log(record);
-  //     return record;
-  //   });
-  // });
-
-  // let session = await Session.findOne({ where: { id: sessionId } });
-  // if (session) {
   const session = await Session.update(
     { valid: false },
     {

@@ -30,9 +30,11 @@ const deserializeUser = async (req, res, next) => {
   }
 
   const user = await User.findOne({ where: { email: session.email } });
+  console.log(user);
   const newAccessToken = signJWT(
     {
       sessionId: session.id,
+      userId: user.id,
       email: user.email,
       name: user.name,
       userType: user.userType,

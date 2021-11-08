@@ -8,7 +8,9 @@ const {
 } = require('../controllers/session.Controller');
 const { requireUser } = require('../middleware/requireUser');
 
+// signup
 router.post('/signup', createUserHandler);
+
 // login
 router.post('/session', createSessionHandler);
 
