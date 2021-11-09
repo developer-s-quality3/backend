@@ -1,4 +1,4 @@
-const Session = require('../models/Session');
+const { Session } = require('../models');
 
 const createSession = async (email) => {
   const session = await Session.create({ email, valid: true });

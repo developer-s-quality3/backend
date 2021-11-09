@@ -1,5 +1,4 @@
-const User = require('../models/User');
-const UserTypeChange = require('../models/UserTypeChange');
+const { User, UserTypeChange } = require('../models');
 
 const updateUser = async (req, res) => {
   try {
@@ -11,7 +10,7 @@ const updateUser = async (req, res) => {
 
 const readUser = async (req, res) => {
   try {
-    const user = await User.scope('withoutPassword').findOne({
+    const user = await User.findOne({
       where: { email: req.user.email },
     });
     return res.send({ success: true, user: user });
@@ -33,15 +32,15 @@ const applyWriter = async (req, res) => {
   try {
     const parsedData = JSON.parse(req.body.datas);
 
-    let thumbnailUrl = 'Not provided';
+    let avatarUrl = 'Not provided';
 
-    if (req.file) thumbnailUrl = req.file.location;
+    if (req.file) avatarUrl = req.file.location;
 
     const userTypeChange = await UserTypeChange.create({
       userId: req.user.userId,
-      thumbnailUrl,
-      introduction: parsedData.intro,
-      penName: parsedData.penName,
+      avatarUrl,
+      authorDescription: parsedData.description,
+      authorName: parsedData.authorName,
     });
 
     res.send(userTypeChange);

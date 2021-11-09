@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { verifyJWT, signJWT } = require('../utils/jwt.utils');
-const User = require('../models/User');
+const { User } = require('../models');
 const { createSession, invalidateSession } = require('../db/session');
 
 //create user

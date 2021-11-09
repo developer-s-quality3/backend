@@ -14,7 +14,7 @@ const upload = require('../utils/aws-s3.utils');
 router.get('/profile', requireUser, readUser);
 
 router.post(
-  '/apply-writer',
+  '/apply-author',
   requireUser,
   userType('user'),
   upload.single('avatar'),

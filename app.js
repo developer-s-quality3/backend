@@ -10,7 +10,7 @@ const { deserializeUser } = require('./middleware/deserializeUser');
 const app = express();
 
 // DB connection
-require('./db/sequelize');
+// require('./db/sequelize');
 
 // middlewares
 app.use(express.json());

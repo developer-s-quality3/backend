@@ -1,5 +1,4 @@
-const User = require('../models/User');
-const UserTypeChange = require('../models/UserTypeChange');
+const { User, UserTypeChange } = require('../models');
 
 // user type change application
 const getAllApplication = async (req, res) => {
@@ -65,10 +64,10 @@ const updateApplication = async (req, res) => {
 
     today = mm + '-' + dd + '-' + yyyy;
 
-    applicant.penName = application.penName;
-    applicant.writerIntro = application.introduction;
-    applicant.writerProfile = application.thumbnailUrl;
-    applicant.writerApprovedDate = today;
+    applicant.authorName = application.authorName;
+    applicant.authorDescription = application.authorDescription;
+    applicant.authorAvatar = application.avatarUrl;
+    applicant.authorApprovedDate = today;
 
     await applicant.save();
 
