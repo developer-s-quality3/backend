@@ -1,4 +1,4 @@
-const { User, UserTypeChange } = require('../models');
+const { User, UserTypeChange, Work } = require('../models');
 
 const updateUser = async (req, res) => {
   try {
@@ -49,6 +49,35 @@ const applyWriter = async (req, res) => {
   }
 };
 
+const createWork = async (req, res) => {
+  const { userId, title, workThumbnail, workDescription } = req.body;
+  try {
+    const work = await Work.create({
+      userId,
+      title,
+      workThumbnail,
+      workDescription,
+      status: 'application',
+    });
+    return res.json(work);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const getAllWorks = async (req, res) => {
+  try {
+    const works = await Work.findAll({
+      include: [{ model: User, as: 'user' }],
+    });
+    return res.send(works);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const createEpisode = async (req, res) => {};
+
 const applyCompany = async (req, res) => {
   try {
     const parsedData = JSON.parse(req.body.datas);
@@ -76,4 +105,7 @@ module.exports = {
   deleteUser,
   applyWriter,
   applyCompany,
+  createWork,
+  getAllWorks,
+  createEpisode,
 };

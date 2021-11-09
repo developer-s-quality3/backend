@@ -1,31 +1,24 @@
 'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Works', {
+    await queryInterface.createTable('EpisodeImages', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      userId: {
+      episodeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      status: {
-        type: Sequelize.ENUM,
-        values: ['regular', 'application', 'declined', 'pending'],
-        defaultValue: 'pending',
+      imageOrder: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
-      title: {
-        type: Sequelize.CHAR,
-      },
-      workThumbnail: {
+      imageUrl: {
         type: Sequelize.STRING,
-      },
-      workDescription: {
-        type: Sequelize.CHAR,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -38,6 +31,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Works');
+    await queryInterface.dropTable('EpisodeImages');
   },
 };

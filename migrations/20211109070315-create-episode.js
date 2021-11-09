@@ -1,31 +1,37 @@
 'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Works', {
+    await queryInterface.createTable('Episodes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      userId: {
+      workId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      status: {
+      episodeName: {
+        type: Sequelize.CHAR,
+        allowNull: false,
+      },
+      episodeOrder: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      episodeDescription: {
+        type: Sequelize.CHAR,
+        allowNull: false,
+      },
+      episodeStatus: {
         type: Sequelize.ENUM,
-        values: ['regular', 'application', 'declined', 'pending'],
+        values: ['approved', 'declined', 'pending'],
         defaultValue: 'pending',
       },
-      title: {
-        type: Sequelize.CHAR,
-      },
-      workThumbnail: {
+      episodeThumbnailUrl: {
         type: Sequelize.STRING,
-      },
-      workDescription: {
-        type: Sequelize.CHAR,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -38,6 +44,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Works');
+    await queryInterface.dropTable('Episodes');
   },
 };

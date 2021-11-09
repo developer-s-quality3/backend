@@ -4,6 +4,8 @@ const {
   updateUser,
   applyWriter,
   applyCompany,
+  createWork,
+  getAllWorks,
 } = require('../controllers/user.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -27,5 +29,9 @@ router.post(
   upload.single('businessLicense'),
   applyCompany
 );
+router.post('/upload-work', requireUser, createWork);
+
+// test 용
+router.get('/works', getAllWorks);
 
 module.exports = router;
