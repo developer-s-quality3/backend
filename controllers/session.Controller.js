@@ -23,7 +23,7 @@ const createUserHandler = async (req, res) => {
     });
     res.send({ success: true, user: newUser });
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.message);
   }
 };
 
@@ -31,43 +31,47 @@ const createUserHandler = async (req, res) => {
 const createSessionHandler = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ where: { email } });
+  try {
+    const user = await User.findOne({ where: { email } });
 
-  if (!user) {
-    return res.status(401).send('Invalid email or password');
-  }
-  const validPassword = await bcrypt.compare(password, user.password);
-  if (validPassword) {
-    const session = await createSession(email);
+    if (!user) {
+      return res.status(401).send('Invalid email or password');
+    }
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (validPassword) {
+      const session = await createSession(email);
 
-    //create access & refresh token
-    const accessToken = signJWT(
-      {
-        sessionId: session.id,
-        userId: user.id,
-        email: user.email,
-        name: user.name,
-        userType: user.userType,
-      },
-      '30m'
-    );
-    const refreshToken = signJWT({ sessionId: session.id }, '2h');
+      //create access & refresh token
+      const accessToken = signJWT(
+        {
+          sessionId: session.id,
+          userId: user.id,
+          email: user.email,
+          name: user.name,
+          userType: user.userType,
+        },
+        '6h'
+      );
+      const refreshToken = signJWT({ sessionId: session.id }, '14d');
 
-    //set access token in cookie
-    res.cookie('accessToken', accessToken, {
-      maxAge: 300000, // 5min
-      httpOnly: true,
-    });
-    //set refresh token in cookie
-    res.cookie('refreshToken', refreshToken, {
-      maxAge: 2.628e9, // 1 month
-      httpOnly: true,
-    });
+      //set access token in cookie
+      res.cookie('accessToken', accessToken, {
+        maxAge: 2.16e7, // 6hours
+        httpOnly: true,
+      });
+      //set refresh token in cookie
+      res.cookie('refreshToken', refreshToken, {
+        maxAge: 1.21e9, // 2weeks
+        httpOnly: true,
+      });
 
-    //send user back
-    return res.send(session);
-  } else {
-    return res.status(401).send('Invalid email or password');
+      //send user back
+      return res.send(session);
+    } else {
+      return res.status(401).send('Invalid email or password');
+    }
+  } catch {
+    throw new Error(error.message);
   }
 };
 
@@ -79,23 +83,25 @@ const getSessionHandler = (req, res) => {
 
 //log out handler
 const deleteSessionHandler = async (req, res) => {
-  const { accessToken, refreshToken } = req.cookies;
-  console.log(accessToken);
-  console.log(refreshToken);
-  const { sessionId } = req.user;
+  try {
+    const { accessToken, refreshToken } = req.cookies;
+    const { sessionId } = req.user;
 
-  res.cookie('accessToken', '', {
-    maxAge: 0,
-    httpOnly: true,
-  });
-  res.cookie('refreshToken', '', {
-    maxAge: 0,
-    httpOnly: true,
-  });
+    res.cookie('accessToken', '', {
+      maxAge: 0,
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', '', {
+      maxAge: 0,
+      httpOnly: true,
+    });
 
-  const session = await invalidateSession(sessionId);
+    const session = await invalidateSession(sessionId);
 
-  return res.send(session);
+    return res.send(session);
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 module.exports = {

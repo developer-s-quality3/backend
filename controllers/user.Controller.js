@@ -17,7 +17,7 @@ const readUser = async (req, res) => {
     return res.send({ success: true, user: user });
   } catch (error) {
     // throw an error
-    return res.status(500).send('something went wrong');
+    throw new Error(error.message);
   }
 };
 
@@ -33,15 +33,9 @@ const applyWriter = async (req, res) => {
   try {
     const parsedData = JSON.parse(req.body.datas);
 
-    // console.log(parsedData);
-    console.log(req.user);
+    let thumbnailUrl = 'Not provided';
 
-    let thumbnailUrl;
-
-    if (req.file) {
-      // console.log(req.file);
-      thumbnailUrl = req.file.location;
-    }
+    if (req.file) thumbnailUrl = req.file.location;
 
     const userTypeChange = await UserTypeChange.create({
       userId: req.user.userId,
@@ -50,9 +44,9 @@ const applyWriter = async (req, res) => {
       penName: parsedData.penName,
     });
 
-    return res.send(userTypeChange);
+    res.send(userTypeChange);
   } catch (error) {
-    return res.status(500).send('something went wrong');
+    throw new Error(error.message);
   }
 };
 
@@ -60,14 +54,9 @@ const applyCompany = async (req, res) => {
   try {
     const parsedData = JSON.parse(req.body.datas);
 
-    // console.log(parsedData);
-    console.log(req.user);
+    let businesslicenseImgUrl = 'Not provided';
 
-    let businesslicenseImgUrl;
-
-    if (req.file) {
-      businesslicenseImgUrl = req.file.location;
-    }
+    if (req.file) businesslicenseImgUrl = req.file.location;
 
     const userTypeChange = await UserTypeChange.create({
       userId: req.user.userId,
@@ -78,7 +67,7 @@ const applyCompany = async (req, res) => {
 
     return res.send(userTypeChange);
   } catch (error) {
-    return res.status(500).send('something went wrong');
+    throw new Error(error.message);
   }
 };
 

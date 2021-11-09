@@ -1,9 +1,11 @@
 const userType = (type) => {
   return function (req, res, next) {
     if (req.user.userType !== type) {
-      return res.status(403).send({ success: false, message: 'user invalid' });
+      return res
+        .status(403)
+        .send({ success: false, message: 'user Type invalid' });
     }
-    console.log(req.user);
+
     return next();
   };
 };

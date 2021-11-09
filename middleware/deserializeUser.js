@@ -39,11 +39,11 @@ const deserializeUser = async (req, res, next) => {
       name: user.name,
       userType: user.userType,
     },
-    '10m'
+    '6h'
   );
 
   res.cookie('accessToken', newAccessToken, {
-    maxAge: 300000, // 5min
+    maxAge: 2.16e+7, // 6 hours
     httpOnly: true,
   });
 
