@@ -40,7 +40,10 @@ router.post(
 router.post(
   '/upload-episode',
   requireUser,
-  upload.single('episodeThumbnail'),
+  upload.fields([
+    { name: 'episodeThumbnail', maxCount: 1 },
+    { name: 'episodeImages', maxCount: 20 },
+  ]),
   createEpisode
 );
 router.post(

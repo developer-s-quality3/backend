@@ -90,16 +90,30 @@ const createEpisode = async (req, res) => {
   const parsedData = JSON.parse(req.body.episodeInfo);
 
   const { workId, episodeName, episodeOrder, episodeDescription } = parsedData;
+  const { episodeThumbnail, episodeImages } = req.files;
 
+  // console.log(episodeThumbnail[0]);
   try {
     const episode = await Episode.create({
       workId,
       episodeName,
       episodeOrder,
       episodeDescription,
-      episodeThumbnailUrl: req.file.location,
+      episodeThumbnailUrl: episodeThumbnail[0].location,
     });
-    return res.send(episode);
+
+    const episodeImagesDatas = episodeImages.map((file) => {
+      return {
+        episodeId: episode.id,
+        imageOrder: file.originalname.split('.')[0].split('_')[1],
+        imageUrl: file.location,
+      };
+    });
+
+    const uploadedEpisodeImages = await EpisodeImage.bulkCreate(
+      episodeImagesDatas
+    );
+    return res.send(uploadedEpisodeImages);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -107,11 +121,11 @@ const createEpisode = async (req, res) => {
 
 const uploadEpisodeImages = async (req, res) => {
   const parsedData = JSON.parse(req.body.episodeImagesInfo);
-  // console.log(req.files);
+  console.log(req.files);
   const episodeImagesUrl = req.files.map((file) => file.location);
 
   try {
-    const episodesImages = await EpisodeImage.create({});
+    // const episodesImages = await EpisodeImage.create({});
     res.send('test');
   } catch (error) {
     throw new Error(error.message);
