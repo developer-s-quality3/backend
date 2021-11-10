@@ -1,4 +1,10 @@
-const { User, UserTypeChange, Work } = require('../models');
+const {
+  User,
+  UserTypeChange,
+  Work,
+  Episode,
+  EpisodeImage,
+} = require('../models');
 
 const updateUser = async (req, res) => {
   try {
@@ -50,16 +56,20 @@ const applyWriter = async (req, res) => {
 };
 
 const createWork = async (req, res) => {
-  const { userId, title, workThumbnail, workDescription } = req.body;
+  const parsedData = JSON.parse(req.body.workInfo);
+
+  const { userId, title, workDescription } = parsedData;
+
+  console.log(req.file);
   try {
     const work = await Work.create({
       userId,
       title,
-      workThumbnail,
+      workThumbnail: req.file.location,
       workDescription,
       status: 'application',
     });
-    return res.json(work);
+    return res.send(work);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -76,7 +86,39 @@ const getAllWorks = async (req, res) => {
   }
 };
 
-const createEpisode = async (req, res) => {};
+const createEpisode = async (req, res) => {
+  const parsedData = JSON.parse(req.body.episodeInfo);
+
+  const { workId, episodeName, episodeOrder, episodeDescription } = parsedData;
+
+  try {
+    const episode = await Episode.create({
+      workId,
+      episodeName,
+      episodeOrder,
+      episodeDescription,
+      episodeThumbnailUrl: req.file.location,
+    });
+    return res.send(episode);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const uploadEpisodeImages = async (req, res) => {
+  const parsedData = JSON.parse(req.body.episodeImagesInfo);
+  // console.log(req.files);
+  const episodeImagesUrl = req.files.map((file) => file.location);
+
+  try {
+    const episodesImages = await EpisodeImage.create({});
+    res.send('test');
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const getEpisodeImages = async (req, res) => {};
 
 const applyCompany = async (req, res) => {
   try {
@@ -108,4 +150,5 @@ module.exports = {
   createWork,
   getAllWorks,
   createEpisode,
+  uploadEpisodeImages,
 };
