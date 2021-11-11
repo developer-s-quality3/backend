@@ -1,4 +1,10 @@
-const { User, UserTypeChange, Work } = require('../models');
+const {
+  User,
+  UserTypeChange,
+  Work,
+  Episode,
+  EpisodeImage,
+} = require('../models');
 
 // user type change application
 const getAllApplication = async (req, res) => {
@@ -55,8 +61,24 @@ const updateApplication = async (req, res) => {
 
     const saved = await application.save();
 
-    const applicant = await User.findByPk(application.userId);
+    const applicant = await User.findOne({
+      where: { id: application.userId },
+      include: [{ model: Work, as: 'work' }],
+    });
 
+    // update work status to 'regular'
+    const appliedWork = await Work.findByPk(applicant.work[0].id);
+
+    appliedWork.status = 'regular';
+    await appliedWork.save();
+
+    // update episode status to 'approved'
+    const appliedEpisode = await Episode.findOne({
+      where: { workId: appliedWork.id },
+    });
+    console.log(appliedEpisode.episodeStatus);
+    appliedEpisode.episodeStatus = 'approved';
+    await appliedEpisode.save();
     let today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -72,6 +94,8 @@ const updateApplication = async (req, res) => {
 
     await applicant.save();
 
+    const work = await Work.findOne();
+
     return res.send({ saved, applicant });
   } catch (error) {
     throw new Error(error.message);
@@ -83,14 +107,30 @@ const getApplicantsWorks = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const userWork = await User.findAll({
+    const userWork = await User.findOne({
       where: {
         id: userId,
       },
-      include: [{ model: Work, as: 'work', where: { status: 'application' } }],
+      include: [{ model: Work, as: 'work', where: { status: 'regular' } }],
+    });
+    if (!userWork) return res.send('검토중인 작품이 없습니다');
+
+    const episode = await Episode.findOne({
+      where: {
+        workId: userWork.work[0].id,
+        episodeStatus: 'pending',
+      },
+      include: [
+        {
+          model: EpisodeImage,
+          as: 'episodeImages',
+        },
+      ],
     });
 
-    return res.send(userWork);
+    if (!episode) return res.send('검토중인 에피소드가 없습니다');
+
+    return res.send({ userWork, episode });
   } catch (error) {
     throw new Error(error.message);
   }

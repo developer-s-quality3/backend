@@ -55,6 +55,8 @@ router.post(
   upload.array('episodeImages'),
   uploadEpisodeImages
 );
+
+router.patch('/profile', requireUser, updateUser);
 // test 용
 router.get('/works', getAllWorks);
 

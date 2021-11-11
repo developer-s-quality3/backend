@@ -7,10 +7,22 @@ const {
 } = require('../models');
 
 const updateUser = async (req, res) => {
+  let { gender, birthDate, name, phoneNumber, password } = req.body;
+  birthDate = new Date(birthDate);
   try {
+    const user = await User.findByPk(req.user.userId);
+
+    user.password = password;
+    user.gender = gender;
+    user.birthDate = birthDate;
+    user.name = name;
+    user.phoneNumber = phoneNumber;
+
+    await user.save();
+    return res.send(user);
     // do something
   } catch (error) {
-    // throw an error
+    throw new Error(error.message);
   }
 };
 
