@@ -34,12 +34,14 @@ router.post(
 router.post(
   '/upload-work',
   requireUser,
+  userType('user'),
   upload.single('workThumbnail'),
   createWork
 );
 router.post(
   '/upload-episode',
   requireUser,
+  userType('user'),
   upload.fields([
     { name: 'episodeThumbnail', maxCount: 1 },
     { name: 'episodeImages', maxCount: 20 },
@@ -49,6 +51,7 @@ router.post(
 router.post(
   '/upload-episode-images',
   requireUser,
+  userType('user'),
   upload.array('episodeImages'),
   uploadEpisodeImages
 );

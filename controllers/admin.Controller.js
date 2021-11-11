@@ -1,4 +1,4 @@
-const { User, UserTypeChange } = require('../models');
+const { User, UserTypeChange, Work } = require('../models');
 
 // user type change application
 const getAllApplication = async (req, res) => {
@@ -30,7 +30,7 @@ const updateApplication = async (req, res) => {
 
   // is userId necessary?
   const { status, userId, reason } = req.body; // status = 'approved' || 'declined'
-  console.log(status);
+
   if (status !== 'approved' && status !== 'declined')
     return res.status(400).send('status must be either approved || declined');
 
@@ -68,6 +68,7 @@ const updateApplication = async (req, res) => {
     applicant.authorDescription = application.authorDescription;
     applicant.authorAvatar = application.avatarUrl;
     applicant.authorApprovedDate = today;
+    applicant.userType = 'author';
 
     await applicant.save();
 
@@ -78,6 +79,22 @@ const updateApplication = async (req, res) => {
 };
 
 // episode application
+const getApplicantsWorks = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const userWork = await User.findAll({
+      where: {
+        id: userId,
+      },
+      include: [{ model: Work, as: 'work', where: { status: 'application' } }],
+    });
+
+    return res.send(userWork);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 // notice
 
@@ -85,4 +102,5 @@ module.exports = {
   getAllApplication,
   getOneApplication,
   updateApplication,
+  getApplicantsWorks,
 };

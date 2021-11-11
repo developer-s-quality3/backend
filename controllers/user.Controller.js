@@ -60,7 +60,6 @@ const createWork = async (req, res) => {
 
   const { userId, title, workDescription } = parsedData;
 
-  console.log(req.file);
   try {
     const work = await Work.create({
       userId,
@@ -92,7 +91,6 @@ const createEpisode = async (req, res) => {
   const { workId, episodeName, episodeOrder, episodeDescription } = parsedData;
   const { episodeThumbnail, episodeImages } = req.files;
 
-  // console.log(episodeThumbnail[0]);
   try {
     const episode = await Episode.create({
       workId,
