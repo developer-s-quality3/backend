@@ -38,6 +38,6 @@ const { userType } = require('./middleware/userType');
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/admin', requireUser, userType('admin'), adminRouter);
-app.use('/writer', writerRouter);
+app.use('/writer', requireUser, userType('author'), writerRouter);
 
 module.exports = app;
