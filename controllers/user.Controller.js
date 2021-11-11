@@ -5,20 +5,21 @@ const {
   Episode,
   EpisodeImage,
 } = require('../models');
+const bcrypt = require('bcrypt');
 
 const updateUser = async (req, res) => {
   let { gender, birthDate, name, phoneNumber, password } = req.body;
   birthDate = new Date(birthDate);
+
+  //TODO: hook으로 변경해야함
+  password = await bcrypt.hash(password, 10);
+
   try {
-    const user = await User.findByPk(req.user.userId);
+    const user = await User.update(
+      { password, gender, birthDate, name, phoneNumber },
+      { where: { id: req.user.userId } }
+    );
 
-    user.password = password;
-    user.gender = gender;
-    user.birthDate = birthDate;
-    user.name = name;
-    user.phoneNumber = phoneNumber;
-
-    await user.save();
     return res.send(user);
     // do something
   } catch (error) {
