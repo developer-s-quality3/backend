@@ -50,13 +50,13 @@ const createSessionHandler = async (req, res) => {
           name: user.name,
           userType: user.userType,
         },
-        '6h'
+        '5s'
       );
       const refreshToken = signJWT({ sessionId: session.id }, '14d');
 
       //set access token in cookie
       res.cookie('accessToken', accessToken, {
-        maxAge: 2.16e7, // 6hours
+        maxAge: 300000, // 6hours
         httpOnly: true,
       });
       //set refresh token in cookie
@@ -66,7 +66,7 @@ const createSessionHandler = async (req, res) => {
       });
 
       //send user back
-      return res.send(session);
+      return res.send({ session, userInfo: user });
     } else {
       return res.status(401).send('Invalid email or password');
     }
@@ -84,7 +84,6 @@ const getSessionHandler = (req, res) => {
 //log out handler
 const deleteSessionHandler = async (req, res) => {
   try {
-    const { accessToken, refreshToken } = req.cookies;
     const { sessionId } = req.user;
 
     res.cookie('accessToken', '', {
