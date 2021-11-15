@@ -4,6 +4,9 @@ const {
   getOneApplication,
   updateApplication,
   getApplicantsWorks,
+  createGenre,
+  updateGenre,
+  deleteGenre,
 } = require('../controllers/admin.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -15,4 +18,8 @@ router.patch('/applications/:applicationId', updateApplication);
 
 router.get('/applications/:userId/work', getApplicantsWorks);
 
+// Genre
+router.post('/genre', createGenre);
+router.patch('/genre', updateGenre);
+router.delete('/genre/:genreId', deleteGenre);
 module.exports = router;

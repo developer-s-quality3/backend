@@ -4,6 +4,7 @@ const {
   Work,
   Episode,
   EpisodeImage,
+  Genre,
 } = require('../models');
 const bcrypt = require('bcrypt');
 
@@ -166,6 +167,15 @@ const applyCompany = async (req, res) => {
   }
 };
 
+const readAllGenre = async (req, res) => {
+  try {
+    const genres = await Genre.findAll();
+    res.send(genres);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   readUser,
   updateUser,
@@ -176,4 +186,5 @@ module.exports = {
   getAllWorks,
   createEpisode,
   uploadEpisodeImages,
+  readAllGenre,
 };

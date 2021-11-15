@@ -4,6 +4,7 @@ const {
   Work,
   Episode,
   EpisodeImage,
+  Genre,
 } = require('../models');
 
 // user type change application
@@ -136,6 +137,47 @@ const getApplicantsWorks = async (req, res) => {
   }
 };
 
+// Genre
+const createGenre = async (req, res) => {
+  const { genreName } = req.body;
+
+  if (!genreName) return res.status(400).send('invalid genreName');
+
+  try {
+    const genre = await Genre.create({ name: genreName });
+    return res.send(genre);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const updateGenre = async (req, res) => {
+  const { genreName, genreId } = req.body;
+  if (!genreName) return res.status(400).send('invalid genreName');
+
+  try {
+    const genre = await Genre.update(
+      { name: genreName },
+      { where: { id: genreId } }
+    );
+    return res.send(genre);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const deleteGenre = async (req, res) => {
+  const { genreId } = req.params;
+
+  try {
+    const deletedGenre = await Genre.destroy({ where: { id: genreId } });
+    if (!deletedGenre) return res.send('invalid genreId or nothing to delete');
+    return res.sendStatus(200);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 // notice
 
 module.exports = {
@@ -143,4 +185,7 @@ module.exports = {
   getOneApplication,
   updateApplication,
   getApplicantsWorks,
+  createGenre,
+  updateGenre,
+  deleteGenre,
 };

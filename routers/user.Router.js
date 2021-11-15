@@ -8,6 +8,7 @@ const {
   getAllWorks,
   createEpisode,
   uploadEpisodeImages,
+  readAllGenre,
 } = require('../controllers/user.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -59,5 +60,8 @@ router.post(
 router.patch('/profile', requireUser, updateUser);
 // test 용
 router.get('/works', getAllWorks);
+
+// Read genre
+router.get('/genre', readAllGenre);
 
 module.exports = router;
