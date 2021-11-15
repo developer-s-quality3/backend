@@ -50,7 +50,7 @@ const createSessionHandler = async (req, res) => {
           name: user.name,
           userType: user.userType,
         },
-        '5s'
+        '1m'
       );
       const refreshToken = signJWT({ sessionId: session.id }, '14d');
 

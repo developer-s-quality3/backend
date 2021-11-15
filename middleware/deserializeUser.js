@@ -39,7 +39,7 @@ const deserializeUser = async (req, res, next) => {
       name: user.name,
       userType: user.userType,
     },
-    '6h'
+    '1m'
   );
 
   res.cookie('accessToken', newAccessToken, {
