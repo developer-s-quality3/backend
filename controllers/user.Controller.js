@@ -71,7 +71,7 @@ const applyWriter = async (req, res) => {
       authorName: parsedData.authorName,
     });
 
-    res.send({ application: userTypeChange });
+    res.send(userTypeChange);
   } catch (error) {
     throw new Error(error.message);
   }
