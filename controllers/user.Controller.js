@@ -50,9 +50,16 @@ const deleteUser = async (req, res) => {
 
 const applyWriter = async (req, res) => {
   try {
+    if (!req.body.datas) return res.status(400).send('invalid datas');
     const parsedData = JSON.parse(req.body.datas);
 
+    if (!parsedData.authorName || !parsedData.description)
+      return res.status(400).send('need authorName, description');
+    console.log(parsedData);
+
     let avatarUrl = 'Not provided';
+
+    // if (!req.file) return res.status(400).send('avatarUrl is required');
 
     if (req.file) avatarUrl = req.file.location;
 
