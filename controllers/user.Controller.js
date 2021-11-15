@@ -5,6 +5,7 @@ const {
   Episode,
   EpisodeImage,
   Genre,
+  GenreType,
 } = require('../models');
 const bcrypt = require('bcrypt');
 
@@ -70,7 +71,7 @@ const applyWriter = async (req, res) => {
       authorName: parsedData.authorName,
     });
 
-    res.send(userTypeChange);
+    res.send({ application: userTypeChange });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -81,6 +82,8 @@ const createWork = async (req, res) => {
 
   const { userId, title, workDescription } = parsedData;
 
+  if (!req.file) return res.status(400).send('workThumbnail is required');
+
   try {
     const work = await Work.create({
       userId,
@@ -89,7 +92,11 @@ const createWork = async (req, res) => {
       workDescription,
       status: 'application',
     });
-    return res.send(work);
+    const genreType = await GenreType.create({
+      genreId: parsedData.genreId,
+      workId: work.id,
+    });
+    return res.send({ work, genreType });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -98,7 +105,10 @@ const createWork = async (req, res) => {
 const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
-      include: [{ model: User, as: 'user' }],
+      include: [
+        { model: User, as: 'user' },
+        { model: GenreType, as: 'genreType' },
+      ],
     });
     return res.send(works);
   } catch (error) {

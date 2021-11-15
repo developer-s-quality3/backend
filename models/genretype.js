@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   GenreType.init(
     {
-      genreId: DataTypes.INTEGER,
-      workId: DataTypes.INTEGER,
+      genreId: { type: DataTypes.INTEGER, allowNull: false },
+      workId: { type: DataTypes.INTEGER, allowNull: false },
     },
     {
       sequelize,
