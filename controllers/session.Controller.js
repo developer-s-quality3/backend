@@ -32,7 +32,9 @@ const createSessionHandler = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({
+      where: { email },
+    });
 
     if (!user) {
       return res.status(401).send('Invalid email or password');
@@ -50,13 +52,13 @@ const createSessionHandler = async (req, res) => {
           name: user.name,
           userType: user.userType,
         },
-        '1m'
+        '30m'
       );
-      const refreshToken = signJWT({ sessionId: session.id }, '14d');
+      const refreshToken = signJWT({ sessionId: session.id }, '21d');
 
       //set access token in cookie
       res.cookie('accessToken', accessToken, {
-        maxAge: 300000, // 6hours
+        maxAge: 6.048e8, // 6hours
         httpOnly: true,
       });
       //set refresh token in cookie
