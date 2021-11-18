@@ -44,10 +44,10 @@ const getOneApplication = async (req, res) => {
 };
 
 const updateApplication = async (req, res) => {
-  const { applicationId } = req.params;
+  // const { applicationId } = req.params;
 
   // is userId necessary?
-  const { status, userId, reason } = req.body; // status = 'approved' || 'declined'
+  const { status, userId, reason, applicationId } = req.body; // status = 'approved' || 'declined'
 
   if (status !== 'approved' && status !== 'declined')
     return res.status(400).send('status must be either approved || declined');
@@ -88,9 +88,11 @@ const updateApplication = async (req, res) => {
     const appliedEpisode = await Episode.findOne({
       where: { workId: appliedWork.id },
     });
-    console.log(appliedEpisode.episodeStatus);
+
+    console.log(appliedEpisode);
     appliedEpisode.episodeStatus = 'approved';
     await appliedEpisode.save();
+
     let today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!

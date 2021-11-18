@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get('/applications', getAllApplication);
 router.get('/applications/:applicationId', getOneApplication);
-router.patch('/applications/:applicationId', updateApplication);
+router.patch('/applications', updateApplication);
 
 router.get('/applications/:userId/work', getApplicantsWorks);
 
