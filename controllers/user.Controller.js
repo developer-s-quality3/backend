@@ -102,6 +102,7 @@ const createWork = async (req, res) => {
   }
 };
 
+// common router
 const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
@@ -184,6 +185,7 @@ const applyCompany = async (req, res) => {
   }
 };
 
+// common router
 const readAllGenre = async (req, res) => {
   try {
     const genres = await Genre.findAll();

@@ -26,7 +26,18 @@ const getOneApplication = async (req, res) => {
 
   try {
     const application = await UserTypeChange.findByPk(applicationId);
-    return res.send(application);
+
+    const userAppliedWork = await Work.findOne({
+      where: { status: 'application', userId: application.userId },
+      include: [{ model: Episode, as: 'episode' }],
+    });
+
+    const episodeImages = await EpisodeImage.findAll({
+      where: { episodeId: userAppliedWork.episode[0].id },
+    });
+    console.log(episodeImages);
+
+    return res.send({ userAppliedWork, episodeImages });
   } catch (error) {
     throw new Error(error.message);
   }

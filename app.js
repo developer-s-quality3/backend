@@ -31,6 +31,7 @@ const authRouter = require('./routers/auth.Router');
 const userRouter = require('./routers/user.Router');
 const adminRouter = require('./routers/admin.Router');
 const writerRouter = require('./routers/writer.Router');
+const commonRouter = require('./routers/common.Router');
 const { requireUser } = require('./middleware/requireUser');
 const { userType } = require('./middleware/userType');
 
@@ -39,5 +40,6 @@ app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/admin', requireUser, userType('admin'), adminRouter);
 app.use('/writer', requireUser, userType('author'), writerRouter);
+app.use('/', commonRouter);
 
 module.exports = app;
