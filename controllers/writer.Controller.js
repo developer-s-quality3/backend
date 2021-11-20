@@ -11,13 +11,15 @@ const createWork = async (req, res) => {
 
   const { userId, title, workDescription } = parsedData;
 
+  console.log(req.file);
+
   try {
     const work = await Work.create({
       userId,
       title,
       workThumbnail: req.file.location,
       workDescription,
-      status: 'application',
+      status: 'pending',
     });
     return res.send(work);
   } catch (error) {
@@ -37,6 +39,35 @@ const getAllWorks = async (req, res) => {
 };
 
 const createEpisode = async (req, res) => {
+  // const parsedData = JSON.parse(req.body.episodeInfo);
+
+  // const { workId, episodeName, episodeOrder, episodeDescription } = parsedData;
+  // const { episodeThumbnail, episodeImages } = req.files;
+
+  // try {
+  //   const episode = await Episode.create({
+  //     workId,
+  //     episodeName,
+  //     episodeOrder,
+  //     episodeDescription,
+  //     episodeThumbnailUrl: episodeThumbnail[0].location,
+  //   });
+
+  //   const episodeImagesDatas = episodeImages.map((file) => {
+  //     return {
+  //       episodeId: episode.id,
+  //       imageOrder: file.originalname.split('.')[0].split('_')[1],
+  //       imageUrl: file.location,
+  //     };
+  //   });
+
+  //   const uploadedEpisodeImages = await EpisodeImage.bulkCreate(
+  //     episodeImagesDatas
+  //   );
+  //   return res.send(uploadedEpisodeImages);
+  // } catch (error) {
+  //   throw new Error(error.message);
+  // }
   const parsedData = JSON.parse(req.body.episodeInfo);
 
   const { workId, episodeName, episodeOrder, episodeDescription } = parsedData;

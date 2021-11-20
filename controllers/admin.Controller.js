@@ -89,7 +89,6 @@ const updateApplication = async (req, res) => {
       where: { workId: appliedWork.id },
     });
 
-    console.log(appliedEpisode);
     appliedEpisode.episodeStatus = 'approved';
     await appliedEpisode.save();
 

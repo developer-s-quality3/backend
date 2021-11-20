@@ -1,10 +1,15 @@
 const express = require('express');
-const { getEpisodes } = require('../controllers/common.Controller');
-const { requireUser } = require('../middleware/requireUser');
-const { userType } = require('../middleware/userType');
+const {
+  getEpisodes,
+  getEpisodeImages,
+} = require('../controllers/common.Controller');
+
 const router = new express.Router();
 
+// 에피소드 가져오기
 router.get('/:workId/episode', getEpisodes);
-router.get('/episode/:episodeId');
+
+// 해당 에피소드의 이미지 가져오기
+router.get('/episode/:episodeId', getEpisodeImages);
 
 module.exports = router;
