@@ -102,7 +102,7 @@ const getLikeCountsForWork = async (req, res) => {
       attributes: [
         [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
       ],
-      where: { workId },
+      where: { workId, isLike: true },
       raw: true,
     });
 

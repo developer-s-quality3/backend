@@ -7,9 +7,8 @@ const {
   createWork,
   createEpisode,
   uploadEpisodeImages,
-  createLike,
+  likeToggleHandler,
   getLikedWorkForUser,
-  updateLike,
 } = require('../controllers/user.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -60,8 +59,7 @@ router.post(
 
 router.patch('/profile', requireUser, updateUser);
 
-router.post('/like', requireUser, createLike);
-router.patch('/like', requireUser, updateLike);
+router.post('/like', requireUser, likeToggleHandler);
 router.get('/like', requireUser, getLikedWorkForUser);
 
 module.exports = router;

@@ -170,34 +170,40 @@ const applyCompany = async (req, res) => {
   }
 };
 
-const createLike = async (req, res) => {
+const likeToggleHandler = async (req, res) => {
   const { workId } = req.body;
 
   try {
-    const like = await Like.findOrCreate({
+    // const like = await Like.findOrCreate({
+    //   where: { userId: req.user.userId, workId },
+    //   defaults: { userId: req.user.userId, workId, isLike: true },
+    // });
+
+    const like = await Like.findOne({
       where: { userId: req.user.userId, workId },
-      defaults: { userId: req.user.userId, workId, isLike: true },
     });
+    if (!like) {
+      const newLike = await Like.create({
+        userId: req.user.userId,
+        workId,
+        isLike: true,
+      });
+      return res.send(newLike);
+    }
+
+    if (like.isLike) {
+      like.isLike = false;
+    } else {
+      like.isLike = true;
+    }
+    await like.save();
+
     return res.send(like);
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const updateLike = async (req, res) => {
-  const { workId, isLike } = req.body;
-
-  try {
-    const like = await Like.update(
-      { isLike },
-      { where: { userId: req.user.userId, workId } }
-    );
-    if (!like[0]) return res.status(400).send('작품을 찾을 수 없습니다');
-    return res.send(like);
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
 // 유저가 좋아요한 작품 가져오기
 const getLikedWorkForUser = async (req, res) => {
   const { userId } = req.user;
@@ -224,7 +230,6 @@ module.exports = {
   createWork,
   createEpisode,
   uploadEpisodeImages,
-  createLike,
+  likeToggleHandler,
   getLikedWorkForUser,
-  updateLike,
 };
