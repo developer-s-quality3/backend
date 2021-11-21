@@ -192,7 +192,7 @@ const updateLike = async (req, res) => {
       { isLike },
       { where: { userId: req.user.userId, workId } }
     );
-    console.log(like);
+    if (!like[0]) return res.status(400).send('작품을 찾을 수 없습니다');
     return res.send(like);
   } catch (error) {
     throw new Error(error.message);
@@ -208,6 +208,7 @@ const getLikedWorkForUser = async (req, res) => {
       include: [{ model: Work, as: 'work' }],
       where: { userId, isLike: true },
     });
+
     return res.send(likedWork);
   } catch (error) {
     throw new Error(error.message);
