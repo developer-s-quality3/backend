@@ -96,8 +96,14 @@ const getEpisodeImages = async (req, res) => {
 // 작품의 좋아요 가져오기
 const getLikeCountsForWork = async (req, res) => {
   const { workId } = req.params;
+  let userLikeStatus = '정보가 없습니다.';
 
   try {
+    if (req.user) {
+      userLikeStatus = await Like.findOne({
+        where: { workId, userId: req.user.userId },
+      });
+    }
     const likeCounts = await Like.findAll({
       attributes: [
         [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
@@ -106,7 +112,7 @@ const getLikeCountsForWork = async (req, res) => {
       raw: true,
     });
 
-    return res.send(...likeCounts);
+    return res.send({ ...likeCounts, userLikeStatus });
   } catch (error) {
     throw new Error(error.message);
   }
