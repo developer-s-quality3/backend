@@ -3,9 +3,10 @@ const { Model } = require('sequelize');
 const bcrypt = require('bcrypt');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate({ Work }) {
+    static associate({ Work, Like }) {
       // define association here
       this.hasMany(Work, { foreignKey: 'userId', as: 'work' });
+      this.hasMany(Like, { foreignKey: 'userId', as: 'like' });
     }
     toJSON() {
       return { ...this.get(), password: undefined };

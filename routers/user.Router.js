@@ -5,10 +5,11 @@ const {
   applyWriter,
   applyCompany,
   createWork,
-  getAllWorks,
   createEpisode,
   uploadEpisodeImages,
-  readAllGenre,
+  createLike,
+  getLikedWorkForUser,
+  updateLike,
 } = require('../controllers/user.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -58,10 +59,9 @@ router.post(
 );
 
 router.patch('/profile', requireUser, updateUser);
-// test 용
-router.get('/works', getAllWorks);
 
-// Read genre
-router.get('/genre', readAllGenre);
+router.post('/like', requireUser, createLike);
+router.patch('/like', requireUser, updateLike);
+router.get('/like', requireUser, getLikedWorkForUser);
 
 module.exports = router;

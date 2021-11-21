@@ -4,8 +4,9 @@ const {
   Work,
   Episode,
   EpisodeImage,
-  Genre,
   GenreType,
+  Like,
+  Sequelize,
 } = require('../models');
 const bcrypt = require('bcrypt');
 
@@ -102,21 +103,6 @@ const createWork = async (req, res) => {
   }
 };
 
-// common router
-const getAllWorks = async (req, res) => {
-  try {
-    const works = await Work.findAll({
-      include: [
-        { model: User, as: 'user' },
-        { model: GenreType, as: 'genreType' },
-      ],
-    });
-    return res.send(works);
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
 const createEpisode = async (req, res) => {
   const parsedData = JSON.parse(req.body.episodeInfo);
 
@@ -162,8 +148,7 @@ const uploadEpisodeImages = async (req, res) => {
   }
 };
 
-const getEpisodeImages = async (req, res) => {};
-
+// 기업신청
 const applyCompany = async (req, res) => {
   try {
     const parsedData = JSON.parse(req.body.datas);
@@ -185,11 +170,45 @@ const applyCompany = async (req, res) => {
   }
 };
 
-// common router
-const readAllGenre = async (req, res) => {
+const createLike = async (req, res) => {
+  const { workId } = req.body;
+
   try {
-    const genres = await Genre.findAll();
-    res.send(genres);
+    const like = await Like.findOrCreate({
+      where: { userId: req.user.userId, workId },
+      defaults: { userId: req.user.userId, workId, isLike: true },
+    });
+    return res.send(like);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const updateLike = async (req, res) => {
+  const { workId, isLike } = req.body;
+
+  try {
+    const like = await Like.update(
+      { isLike },
+      { where: { userId: req.user.userId, workId } }
+    );
+    console.log(like);
+    return res.send(like);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+// 유저가 좋아요한 작품 가져오기
+const getLikedWorkForUser = async (req, res) => {
+  const { userId } = req.user;
+
+  try {
+    const likedWork = await Like.findAll({
+      // include: [{ model: Work, as: 'work', where: { status: 'regular' } }],
+      include: [{ model: Work, as: 'work' }],
+      where: { userId, isLike: true },
+    });
+    return res.send(likedWork);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -202,8 +221,9 @@ module.exports = {
   applyWriter,
   applyCompany,
   createWork,
-  getAllWorks,
   createEpisode,
   uploadEpisodeImages,
-  readAllGenre,
+  createLike,
+  getLikedWorkForUser,
+  updateLike,
 };
