@@ -112,7 +112,7 @@ const getLikeCountsForWork = async (req, res) => {
       raw: true,
     });
 
-    return res.send({ ...likeCounts, userLikeStatus });
+    return res.send({ likeCounts: likeCounts[0].likedCounts, userLikeStatus });
   } catch (error) {
     throw new Error(error.message);
   }
