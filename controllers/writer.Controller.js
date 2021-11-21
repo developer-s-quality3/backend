@@ -1,17 +1,11 @@
-const {
-  User,
-  UserTypeChange,
-  Work,
-  Episode,
-  EpisodeImage,
-} = require('../models');
+const { User, Work, Episode, EpisodeImage, GenreType } = require('../models');
 
 const createWork = async (req, res) => {
   const parsedData = JSON.parse(req.body.workInfo);
 
   const { userId, title, workDescription } = parsedData;
 
-  console.log(req.file);
+  console.log(req.files);
 
   try {
     const work = await Work.create({
@@ -21,7 +15,11 @@ const createWork = async (req, res) => {
       workDescription,
       status: 'pending',
     });
-    return res.send(work);
+    const genreType = await GenreType.create({
+      genreId: parsedData.genreId,
+      workId: work.id,
+    });
+    return res.send({ work, genreType });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -38,46 +36,31 @@ const getAllWorks = async (req, res) => {
   }
 };
 
+// 작품id, 작품제목
+const getWorksForCreateEpisode = async (req, res) => {
+  const { userId } = req.user;
+
+  try {
+    const works = await Work.findAll({
+      where: { userId },
+      attributes: ['id', 'title'],
+    });
+    return res.send(works);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+// episodeOrder => auto_increment
 const createEpisode = async (req, res) => {
-  // const parsedData = JSON.parse(req.body.episodeInfo);
-
-  // const { workId, episodeName, episodeOrder, episodeDescription } = parsedData;
-  // const { episodeThumbnail, episodeImages } = req.files;
-
-  // try {
-  //   const episode = await Episode.create({
-  //     workId,
-  //     episodeName,
-  //     episodeOrder,
-  //     episodeDescription,
-  //     episodeThumbnailUrl: episodeThumbnail[0].location,
-  //   });
-
-  //   const episodeImagesDatas = episodeImages.map((file) => {
-  //     return {
-  //       episodeId: episode.id,
-  //       imageOrder: file.originalname.split('.')[0].split('_')[1],
-  //       imageUrl: file.location,
-  //     };
-  //   });
-
-  //   const uploadedEpisodeImages = await EpisodeImage.bulkCreate(
-  //     episodeImagesDatas
-  //   );
-  //   return res.send(uploadedEpisodeImages);
-  // } catch (error) {
-  //   throw new Error(error.message);
-  // }
   const parsedData = JSON.parse(req.body.episodeInfo);
 
-  const { workId, episodeName, episodeOrder, episodeDescription } = parsedData;
+  const { workId, episodeName, episodeDescription } = parsedData;
   const { episodeThumbnail, episodeImages } = req.files;
 
   try {
     const episode = await Episode.create({
       workId,
       episodeName,
-      episodeOrder,
       episodeDescription,
       episodeThumbnailUrl: episodeThumbnail[0].location,
     });
@@ -117,4 +100,5 @@ module.exports = {
   createEpisode,
   getAllWorks,
   createWork,
+  getWorksForCreateEpisode,
 };

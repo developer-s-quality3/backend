@@ -4,6 +4,7 @@ const {
   getAllWorks,
   createEpisode,
   uploadEpisodeImages,
+  getWorksForCreateEpisode,
 } = require('../controllers/writer.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -27,6 +28,12 @@ router.post(
     { name: 'episodeImages', maxCount: 20 },
   ]),
   createEpisode
+);
+router.get(
+  '/upload',
+  requireUser,
+  userType('author'),
+  getWorksForCreateEpisode
 );
 
 module.exports = router;

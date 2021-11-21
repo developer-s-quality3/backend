@@ -81,7 +81,7 @@ const applyWriter = async (req, res) => {
 const createWork = async (req, res) => {
   const parsedData = JSON.parse(req.body.workInfo);
 
-  const { userId, title, workDescription } = parsedData;
+  const { userId, title, workDescription, genreId } = parsedData;
 
   if (!req.file) return res.status(400).send('workThumbnail is required');
 
@@ -204,8 +204,8 @@ const getLikedWorkForUser = async (req, res) => {
 
   try {
     const likedWork = await Like.findAll({
-      // include: [{ model: Work, as: 'work', where: { status: 'regular' } }],
-      include: [{ model: Work, as: 'work' }],
+      include: [{ model: Work, as: 'work', where: { status: 'regular' } }],
+      // include: [{ model: Work, as: 'work' }],
       where: { userId, isLike: true },
     });
 

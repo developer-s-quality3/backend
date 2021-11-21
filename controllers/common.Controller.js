@@ -18,8 +18,26 @@ const getAllWorks = async (req, res) => {
       },
       include: [
         { model: User, as: 'user', attributes: ['authorName'] },
-        { model: GenreType, as: 'genreType' },
+        {
+          model: GenreType,
+          as: 'genreType',
+          attributes: ['id'],
+          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
+        },
+        {
+          model: Like,
+          as: 'like',
+          attributes: [
+            [
+              Sequelize.fn('COUNT', Sequelize.col('Likes.workId')),
+              'likedCounts',
+            ],
+          ],
+          where: { workId },
+          raw: true,
+        },
       ],
+      attributes: ['id', 'title', 'workThumbnail'],
     });
     return res.send(works);
   } catch (error) {
