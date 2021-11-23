@@ -58,12 +58,12 @@ const getEpisodes = async (req, res) => {
   const { workId } = req.params;
 
   try {
-    const work = await Work.findOne({ where: { id: workId } });
-    const episodes = await Episode.findAll({
-      include: [{ model: EpisodeImage, as: 'episodeImages' }],
-      where: { workId },
+    const work = await Work.findOne({
+      where: { id: workId },
+      include: [{ model: Episode, as: 'episode' }],
     });
-    return res.send({ work, episodes });
+
+    return res.send(work);
   } catch (error) {
     throw new Error(error.message);
   }
