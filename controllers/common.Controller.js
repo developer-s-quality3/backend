@@ -60,7 +60,16 @@ const getEpisodes = async (req, res) => {
   try {
     const work = await Work.findOne({
       where: { id: workId },
-      include: [{ model: Episode, as: 'episode' }],
+      include: [
+        { model: Episode, as: 'episode' },
+        { model: User, as: 'user', attributes: ['authorName'] },
+        {
+          model: GenreType,
+          as: 'genreType',
+          attributes: ['id'],
+          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
+        },
+      ],
     });
 
     return res.send(work);
