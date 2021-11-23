@@ -1,6 +1,6 @@
-const { getSession } = require('../db/session');
-const { User } = require('../models');
-const { verifyJWT, signJWT } = require('../utils/jwt.utils');
+const { getSession } = require("../db/session");
+const { User } = require("../models");
+const { verifyJWT, signJWT } = require("../utils/jwt.utils");
 
 const deserializeUser = async (req, res, next) => {
   const { accessToken, refreshToken } = req.cookies;
@@ -39,12 +39,12 @@ const deserializeUser = async (req, res, next) => {
       name: user.name,
       userType: user.userType,
     },
-    '30m'
+    "30m"
   );
 
-  res.cookie('accessToken', newAccessToken, {
+  res.cookie("accessToken", newAccessToken, {
     maxAge: 2.16e7, // 6 hours
-    httpOnly: true,
+    httpOnly: false,
   });
 
   req.user = verifyJWT(newAccessToken).payload;
