@@ -58,11 +58,12 @@ const getEpisodes = async (req, res) => {
   const { workId } = req.params;
 
   try {
+    const work = await Work.findOne({ where: { id: workId } });
     const episodes = await Episode.findAll({
       include: [{ model: EpisodeImage, as: 'episodeImages' }],
       where: { workId },
     });
-    return res.send(episodes);
+    return res.send({ work, episodes });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -96,10 +97,11 @@ const getEpisodeImages = async (req, res) => {
 // 작품의 좋아요 가져오기
 const getLikeCountsForWork = async (req, res) => {
   const { workId } = req.params;
-  let userLikeStatus = '정보가 없습니다.';
+  let userLikeStatus = false;
 
   try {
     if (req.user) {
+      console.log(req.user);
       userLikeStatus = await Like.findOne({
         where: { workId, userId: req.user.userId },
       });
