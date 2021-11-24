@@ -203,9 +203,30 @@ const getAppliedEpisodes = async (req, res) => {
   }
 };
 
+const getOneAppliedEpisode = async (req, res) => {
+  const { episodeId } = req.params;
+  try {
+    const appliedEpisode = await Episode.findByPk(episodeId);
+    return res.send(appliedEpisode);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 // update applied episodes
 const updateAppliedEpisodes = async (req, res) => {
+  const { episodeId } = req.params;
+  const { episodeStatus } = req.body;
+  if (episodeStatus !== 'approved' && episodeStatus !== 'declined')
+    return res.status(400).send('status must be either approved || declined');
   try {
+    const episode = await Episode.update(
+      { episodeStatus },
+      { where: { id: episodeId } }
+    );
+    if (!episode[0])
+      return res.status(400).send('에피소드 상태 변경에 문제가 있습니다');
+    return res.send(episode);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -221,4 +242,6 @@ module.exports = {
   updateGenre,
   deleteGenre,
   getAppliedEpisodes,
+  getOneAppliedEpisode,
+  updateAppliedEpisodes,
 };
