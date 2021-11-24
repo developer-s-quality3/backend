@@ -24,18 +24,22 @@ const getAllWorks = async (req, res) => {
           attributes: ['id'],
           include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
         },
-        // {
-        //   model: Like,
-        //   as: 'like',
-        //   attributes: [
-        //     [
-        //       Sequelize.fn('COUNT', Sequelize.col('Likes.workId')),
-        //       'likedCounts',
-        //     ],
-        //   ],
-        //   where: { workId },
-        //   raw: true,
-        // },
+        {
+          model: Like,
+          as: 'like',
+          attributes: {
+            include: [
+              [
+                Sequelize.literal(
+                  `(SELECT COUNT(*) FROM like WHERE workId = works.id)`
+                ),
+                'likedCounts',
+              ],
+            ],
+          },
+
+          // raw: true,
+        },
       ],
       attributes: ['id', 'title', 'workThumbnail'],
     });

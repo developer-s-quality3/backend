@@ -12,9 +12,12 @@ const getAllApplication = async (req, res) => {
   // DESC ASC
   const { date, pending, approved, declined } = req.query;
   try {
-    const applications = await UserTypeChange.findAll({
-      order: [['updatedAt', 'DESC']],
-    });
+    const applications = await UserTypeChange.findAll(
+      { where: { status: 'pending' } },
+      {
+        order: [['updatedAt', 'DESC']],
+      }
+    );
     return res.send(applications);
   } catch (error) {
     throw new Error(error.message);
@@ -191,7 +194,6 @@ const deleteGenre = async (req, res) => {
 };
 
 // get all applied episodes
-
 const getAppliedEpisodes = async (req, res) => {
   try {
     const appliedEpisodes = await Episode.findAll({
@@ -206,7 +208,16 @@ const getAppliedEpisodes = async (req, res) => {
 const getOneAppliedEpisode = async (req, res) => {
   const { episodeId } = req.params;
   try {
-    const appliedEpisode = await Episode.findByPk(episodeId);
+    const appliedEpisode = await Episode.findOne({
+      where: { id: episodeId },
+      include: [
+        {
+          model: EpisodeImage,
+          as: 'episodeImages',
+          attributes: ['imageUrl', 'imageOrder'],
+        },
+      ],
+    });
     return res.send(appliedEpisode);
   } catch (error) {
     throw new Error(error.message);
