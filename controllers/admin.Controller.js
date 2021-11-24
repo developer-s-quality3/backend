@@ -89,7 +89,7 @@ const updateApplication = async (req, res) => {
       where: { workId: appliedWork.id },
     });
 
-    appliedEpisode.episodeStatus = 'approved';
+    rappliedEpisode.episodeStatus = 'approved';
     await appliedEpisode.save();
 
     let today = new Date();
@@ -190,6 +190,26 @@ const deleteGenre = async (req, res) => {
   }
 };
 
+// get all applied episodes
+
+const getAppliedEpisodes = async (req, res) => {
+  try {
+    const appliedEpisodes = await Episode.findAll({
+      where: { episodeStatus: 'pending' },
+    });
+    return res.send(appliedEpisodes);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// update applied episodes
+const updateAppliedEpisodes = async (req, res) => {
+  try {
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 // notice
 
 module.exports = {
@@ -200,4 +220,5 @@ module.exports = {
   createGenre,
   updateGenre,
   deleteGenre,
+  getAppliedEpisodes,
 };
