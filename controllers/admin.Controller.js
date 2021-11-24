@@ -198,7 +198,22 @@ const getAppliedEpisodes = async (req, res) => {
   try {
     const appliedEpisodes = await Episode.findAll({
       where: { episodeStatus: 'pending' },
+      include: [
+        {
+          model: Work,
+          as: 'work',
+          attributes: ['title', 'userId'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['authorName'],
+            },
+          ],
+        },
+      ],
     });
+
     return res.send(appliedEpisodes);
   } catch (error) {
     throw new Error(error.message);
