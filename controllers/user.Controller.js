@@ -113,7 +113,7 @@ const createEpisode = async (req, res) => {
     const episode = await Episode.create({
       workId,
       episodeName,
-      episodeOrder,
+      episodeOrder: 1,
       episodeDescription,
       episodeThumbnailUrl: episodeThumbnail[0].location,
     });
