@@ -27,18 +27,22 @@ const getAllWorks = async (req, res) => {
         {
           model: Like,
           as: 'like',
-          attributes: {
-            include: [
-              [
-                Sequelize.literal(
-                  `(SELECT COUNT(*) FROM like WHERE workId = works.id)`
-                ),
-                'likedCounts',
-              ],
-            ],
+          where: {
+            isLike: true,
           },
-
-          // raw: true,
+          attributes: [
+            [
+              Sequelize.fn('COUNT', Sequelize.col('like.workId')),
+              'likedCounts',
+            ],
+          ],
+          raw: true,
+        },
+        {
+          model: Episode,
+          as: 'episode',
+          attributes: ['id'],
+          include: [{ model: View, as: 'view', attributes: ['views'] }],
         },
       ],
       attributes: ['id', 'title', 'workThumbnail'],
@@ -114,7 +118,7 @@ const getLikeCountsForWork = async (req, res) => {
 
   try {
     if (req.user) {
-      console.log(req.user);
+      // console.log(req.user);
       userLikeStatus = await Like.findOne({
         where: { workId, userId: req.user.userId },
       });

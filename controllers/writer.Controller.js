@@ -5,7 +5,7 @@ const createWork = async (req, res) => {
 
   const { userId, title, workDescription } = parsedData;
 
-  console.log(req.files);
+  //console.log(req.files);
 
   try {
     const work = await Work.create({
@@ -25,9 +25,11 @@ const createWork = async (req, res) => {
   }
 };
 
+// 작가 홈
 const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
+      where: { userId: req.user.userId },
       include: [{ model: User, as: 'user' }],
     });
     return res.send(works);
@@ -50,7 +52,7 @@ const getWorksForCreateEpisode = async (req, res) => {
     throw new Error(error.message);
   }
 };
-// episodeOrder => auto_increment
+
 const createEpisode = async (req, res) => {
   const parsedData = JSON.parse(req.body.episodeInfo);
 
@@ -85,7 +87,7 @@ const createEpisode = async (req, res) => {
 
 const uploadEpisodeImages = async (req, res) => {
   const parsedData = JSON.parse(req.body.episodeImagesInfo);
-  console.log(req.files);
+  //console.log(req.files);
   const episodeImagesUrl = req.files.map((file) => file.location);
 
   try {

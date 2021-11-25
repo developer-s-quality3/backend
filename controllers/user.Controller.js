@@ -57,7 +57,7 @@ const applyWriter = async (req, res) => {
 
     if (!parsedData.authorName || !parsedData.description)
       return res.status(400).send('need authorName, description');
-    console.log(parsedData);
+    //console.log(parsedData);
 
     let avatarUrl = 'Not provided';
 

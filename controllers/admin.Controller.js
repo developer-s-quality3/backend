@@ -38,9 +38,13 @@ const getOneApplication = async (req, res) => {
     const episodeImages = await EpisodeImage.findAll({
       where: { episodeId: userAppliedWork.episode[0].id },
     });
-    console.log(episodeImages);
+    // console.log(episodeImages);
 
-    return res.send({ userAppliedWork, episodeImages });
+    return res.send({
+      ApplicationId: application.id,
+      userAppliedWork,
+      episodeImages,
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -196,20 +200,19 @@ const deleteGenre = async (req, res) => {
 // get all applied episodes
 const getAppliedEpisodes = async (req, res) => {
   try {
-    const appliedEpisodes = await Episode.findAll({
-      where: { episodeStatus: 'pending' },
+    const appliedEpisodes = await Work.findAll({
+      where: { status: 'regular' },
       include: [
         {
-          model: Work,
-          as: 'work',
-          attributes: ['title', 'userId'],
-          include: [
-            {
-              model: User,
-              as: 'user',
-              attributes: ['authorName'],
-            },
-          ],
+          model: Episode,
+          as: 'episode',
+          // attributes:[],
+          where: { episodeStatus: 'pending' },
+        },
+        {
+          model: User,
+          as: 'user',
+          where: { userType: 'author' },
         },
       ],
     });
@@ -230,6 +233,18 @@ const getOneAppliedEpisode = async (req, res) => {
           model: EpisodeImage,
           as: 'episodeImages',
           attributes: ['imageUrl', 'imageOrder'],
+        },
+        {
+          model: Work,
+          as: 'work',
+          attributes: ['id', 'workThumbnail', 'title'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['authorName', 'authorDescription'],
+            },
+          ],
         },
       ],
     });
@@ -271,3 +286,10 @@ module.exports = {
   getOneAppliedEpisode,
   updateAppliedEpisodes,
 };
+
+/**
+ * 유저상태변환신청 라우터와 작가에피승인 신청 라우터 확실히 구분하기
+ * 전체만화에 카운트, 조회수 달아서 보내주기
+ * 작가홈-> 배너, 썸네일 및 작가설명 수정
+ *
+ */

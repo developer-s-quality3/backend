@@ -37,4 +37,6 @@ router.get(
   getWorksForCreateEpisode
 );
 
+router.get('/work', requireUser, userType('author'), getAllWorks);
+
 module.exports = router;
