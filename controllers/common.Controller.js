@@ -24,26 +24,26 @@ const getAllWorks = async (req, res) => {
           attributes: ['id'],
           include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
         },
-        {
-          model: Like,
-          as: 'like',
-          where: {
-            isLike: true,
-          },
-          attributes: [
-            [
-              Sequelize.fn('COUNT', Sequelize.col('like.workId')),
-              'likedCounts',
-            ],
-          ],
-          raw: true,
-        },
-        {
-          model: Episode,
-          as: 'episode',
-          attributes: ['id'],
-          include: [{ model: View, as: 'view', attributes: ['views'] }],
-        },
+        // {
+        //   model: Like,
+        //   as: 'like',
+        //   // where: {
+        //   //   isLike: true,
+        //   // },
+        //   attributes: [
+        //     [
+        //       Sequelize.fn('COUNT', Sequelize.col('like.isLike')),
+        //       'likedCounts',
+        //     ],
+        //   ],
+        //   raw: true,
+        // },
+        //   {
+        //     model: Episode,
+        //     as: 'episode',
+        //     attributes: ['id'],
+        //     include: [{ model: View, as: 'view', attributes: ['views'] }],
+        //   },
       ],
       attributes: ['id', 'title', 'workThumbnail'],
     });
@@ -70,7 +70,11 @@ const getEpisodes = async (req, res) => {
       where: { id: workId },
       include: [
         { model: Episode, as: 'episode' },
-        { model: User, as: 'user', attributes: ['authorName'] },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['authorName', 'authorDescription', 'authorAvatar'],
+        },
         {
           model: GenreType,
           as: 'genreType',
