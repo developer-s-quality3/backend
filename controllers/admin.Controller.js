@@ -41,7 +41,7 @@ const getOneApplication = async (req, res) => {
     // console.log(episodeImages);
 
     return res.send({
-      ApplicationId: application.id,
+      applicationId: application.id,
       userAppliedWork,
       episodeImages,
     });
@@ -96,7 +96,7 @@ const updateApplication = async (req, res) => {
       where: { workId: appliedWork.id },
     });
 
-    rappliedEpisode.episodeStatus = 'approved';
+    appliedEpisode.episodeStatus = 'approved';
     await appliedEpisode.save();
 
     let today = new Date();
@@ -237,7 +237,7 @@ const getOneAppliedEpisode = async (req, res) => {
         {
           model: Work,
           as: 'work',
-          attributes: ['id', 'workThumbnail', 'title'],
+          attributes: ['id', 'workThumbnail', 'title', 'workDescription'],
           include: [
             {
               model: User,
@@ -256,8 +256,7 @@ const getOneAppliedEpisode = async (req, res) => {
 
 // update applied episodes
 const updateAppliedEpisodes = async (req, res) => {
-  const { episodeId } = req.params;
-  const { episodeStatus } = req.body;
+  const { episodeStatus, episodeId } = req.body;
   if (episodeStatus !== 'approved' && episodeStatus !== 'declined')
     return res.status(400).send('status must be either approved || declined');
   try {
@@ -272,6 +271,7 @@ const updateAppliedEpisodes = async (req, res) => {
     throw new Error(error.message);
   }
 };
+
 // notice
 
 module.exports = {

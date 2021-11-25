@@ -33,5 +33,5 @@ router.get('/episodes', getAppliedEpisodes);
 // One applied Episode
 router.get('/episodes/:episodeId', getOneAppliedEpisode);
 // update applied Episode
-router.patch('/episodes/:episodeId', updateAppliedEpisodes);
+router.patch('/episodes', updateAppliedEpisodes);
 module.exports = router;

@@ -113,8 +113,9 @@ const createEpisode = async (req, res) => {
     const episode = await Episode.create({
       workId,
       episodeName,
-      episodeOrder: 1,
+      episodeOrder: 1, //not null 없애야함
       episodeDescription,
+
       episodeThumbnailUrl: episodeThumbnail[0].location,
     });
 
