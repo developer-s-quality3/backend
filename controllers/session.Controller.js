@@ -1,7 +1,7 @@
-const bcrypt = require("bcrypt");
-const { verifyJWT, signJWT } = require("../utils/jwt.utils");
-const { User } = require("../models");
-const { createSession, invalidateSession } = require("../db/session");
+const bcrypt = require('bcrypt');
+const { verifyJWT, signJWT } = require('../utils/jwt.utils');
+const { User } = require('../models');
+const { createSession, invalidateSession } = require('../db/session');
 
 //create user
 const createUserHandler = async (req, res) => {
@@ -13,7 +13,7 @@ const createUserHandler = async (req, res) => {
       where: { email },
     });
     if (checkEmailExist) {
-      return res.status(400).send({ success: false, message: "email in use" });
+      return res.status(400).send({ success: false, message: 'email in use' });
     }
 
     const newUser = await User.create({
@@ -36,8 +36,10 @@ const createSessionHandler = async (req, res) => {
       where: { email },
     });
 
+    if (!user) return res.status(400).send('user credential invalid');
+
     if (!user) {
-      return res.status(401).send("Invalid email or password");
+      return res.status(401).send('Invalid email or password');
     }
     const validPassword = await bcrypt.compare(password, user.password);
     if (validPassword) {
@@ -52,17 +54,17 @@ const createSessionHandler = async (req, res) => {
           name: user.name,
           userType: user.userType,
         },
-        "30m"
+        '30m'
       );
-      const refreshToken = signJWT({ sessionId: session.id }, "21d");
+      const refreshToken = signJWT({ sessionId: session.id }, '21d');
 
       //set access token in cookie
-      res.cookie("accessToken", accessToken, {
+      res.cookie('accessToken', accessToken, {
         maxAge: 6.048e8, // 6hours
         httpOnly: false,
       });
       //set refresh token in cookie
-      res.cookie("refreshToken", refreshToken, {
+      res.cookie('refreshToken', refreshToken, {
         maxAge: 1.21e9, // 2weeks
         httpOnly: false,
       });
@@ -70,7 +72,7 @@ const createSessionHandler = async (req, res) => {
       //send user back
       return res.send({ session, userInfo: user });
     } else {
-      return res.status(401).send("Invalid email or password");
+      return res.status(401).send('Invalid email or password');
     }
   } catch {
     throw new Error(error.message);
@@ -88,11 +90,11 @@ const deleteSessionHandler = async (req, res) => {
   try {
     const { sessionId } = req.user;
 
-    res.cookie("accessToken", "", {
+    res.cookie('accessToken', '', {
       maxAge: 0,
       httpOnly: false,
     });
-    res.cookie("refreshToken", "", {
+    res.cookie('refreshToken', '', {
       maxAge: 0,
       httpOnly: false,
     });

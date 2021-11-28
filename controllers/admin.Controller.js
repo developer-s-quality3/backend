@@ -29,11 +29,18 @@ const getOneApplication = async (req, res) => {
 
   try {
     const application = await UserTypeChange.findByPk(applicationId);
+    console.log(application);
+
+    if (!application)
+      return res.status(400).send('상태 변경 신청서를 찾을 수 없습니다');
 
     const userAppliedWork = await Work.findOne({
       where: { status: 'application', userId: application.userId },
       include: [{ model: Episode, as: 'episode' }],
     });
+
+    if (!userAppliedWork)
+      return res.status(400).send('신청한 작품을 찾을 수 없습니다');
 
     const episodeImages = await EpisodeImage.findAll({
       where: { episodeId: userAppliedWork.episode[0].id },
@@ -248,6 +255,9 @@ const getOneAppliedEpisode = async (req, res) => {
         },
       ],
     });
+    if (!appliedEpisode)
+      return res.status(400).send('에피소드를 찾을 수 없습니다');
+
     return res.send(appliedEpisode);
   } catch (error) {
     throw new Error(error.message);

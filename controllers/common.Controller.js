@@ -10,6 +10,36 @@ const {
   Sequelize,
 } = require("../models");
 
+// 홈
+const getAllWorksForHome = async (req, res) => {
+  try {
+    const works = await Work.findAll({
+      where: {
+        status: 'regular',
+      },
+      include: [
+        {
+          model: Like,
+          as: 'like',
+          // attributes: {
+          //   include: [
+          //     [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
+          //   ],
+          //   where: {
+          //     isLike: true,
+          //   },
+          // },
+          // where: [{ isLike: true }],
+        },
+      ],
+    });
+    return res.send(works);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// 전체만화
 const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
@@ -24,26 +54,6 @@ const getAllWorks = async (req, res) => {
           attributes: ["id"],
           include: [{ model: Genre, as: "genre", attributes: ["id", "name"] }],
         },
-        // {
-        //   model: Like,
-        //   as: 'like',
-        //   // where: {
-        //   //   isLike: true,
-        //   // },
-        //   attributes: [
-        //     [
-        //       Sequelize.fn('COUNT', Sequelize.col('like.isLike')),
-        //       'likedCounts',
-        //     ],
-        //   ],
-        //   raw: true,
-        // },
-        //   {
-        //     model: Episode,
-        //     as: 'episode',
-        //     attributes: ['id'],
-        //     include: [{ model: View, as: 'view', attributes: ['views'] }],
-        //   },
       ],
       attributes: ["id", "title", "workThumbnail"],
     });
@@ -96,6 +106,9 @@ const getEpisodeImages = async (req, res) => {
   try {
     const episodeImages = await EpisodeImage.findAll({ where: { episodeId } });
 
+    if (!episodeImages.length)
+      return res.status(400).send('에피소드 이미지가 없습니다');
+
     const view = await View.findOrCreate({
       where: {
         episodeId,
@@ -147,4 +160,5 @@ module.exports = {
   getEpisodes,
   getEpisodeImages,
   getLikeCountsForWork,
+  getAllWorksForHome,
 };
