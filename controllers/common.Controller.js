@@ -73,7 +73,10 @@ const readAllGenre = async (req, res) => {
 };
 
 const getEpisodes = async (req, res) => {
+  const { episodeOrder } = req.query;
   const { workId } = req.params;
+  if (isNaN(workId))
+    return res.status(400).send('workId is required or must be a number');
 
   try {
     const work = await Work.findOne({
@@ -91,6 +94,13 @@ const getEpisodes = async (req, res) => {
           attributes: ['id'],
           include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
         },
+      ],
+      order: [
+        [
+          { model: Episode, as: 'episode' },
+          'episodeOrder',
+          episodeOrder || 'desc',
+        ],
       ],
     });
 
