@@ -83,6 +83,8 @@ const createWork = async (req, res) => {
 
   const { userId, title, workDescription, genreId } = parsedData;
 
+  if (!userId) return res.status(400).send('userId is required');
+
   if (!req.file) return res.status(400).send('workThumbnail is required');
 
   try {

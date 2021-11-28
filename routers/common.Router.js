@@ -5,6 +5,7 @@ const {
   readAllGenre,
   getAllWorks,
   getLikeCountsForWork,
+  getAllWorksForHome,
 } = require('../controllers/common.Controller');
 
 const router = new express.Router();
@@ -15,8 +16,11 @@ router.get('/:workId/episode', getEpisodes);
 // 해당 에피소드의 이미지 가져오기
 router.get('/episode/:episodeId', getEpisodeImages);
 
-// 모든 작업물 가져오기
+// 모든 작업물 가져오기 - 전체만화
 router.get('/works', getAllWorks);
+
+// 모든 작업물 가져오기 - 홈 화면
+router.get('/works/home', getAllWorksForHome);
 
 // 장르 가져오기
 router.get('/genre', readAllGenre);

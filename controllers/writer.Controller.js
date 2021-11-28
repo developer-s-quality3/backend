@@ -5,7 +5,7 @@ const createWork = async (req, res) => {
 
   const { userId, title, workDescription } = parsedData;
 
-  //console.log(req.files);
+  console.log(req.file);
 
   try {
     const work = await Work.create({
@@ -30,7 +30,13 @@ const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
       where: { userId: req.user.userId },
-      include: [{ model: User, as: 'user' }],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['authorName', 'authorDescription', 'authorAvatar'],
+        },
+      ],
     });
     return res.send(works);
   } catch (error) {
@@ -56,14 +62,14 @@ const getWorksForCreateEpisode = async (req, res) => {
 const createEpisode = async (req, res) => {
   const parsedData = JSON.parse(req.body.episodeInfo);
 
-  const { workId, episodeName, episodeDescription } = parsedData;
+  const { workId, episodeName, episodeDescription, episodeOrder } = parsedData;
   const { episodeThumbnail, episodeImages } = req.files;
 
   try {
     const episode = await Episode.create({
       workId,
       episodeName,
-      episodeOrder: 1,
+      episodeOrder,
       episodeDescription,
       episodeThumbnailUrl: episodeThumbnail[0].location,
     });
@@ -97,6 +103,9 @@ const uploadEpisodeImages = async (req, res) => {
     throw new Error(error.message);
   }
 };
+//에피소드 섬네일, 작품명, 에피소드명,  상태, 요청날짜
+//클릭시, 반려사유보내주기
+// const getAllAppliedEpisodes
 
 module.exports = {
   uploadEpisodeImages,
