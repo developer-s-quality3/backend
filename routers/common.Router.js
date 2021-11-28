@@ -6,6 +6,7 @@ const {
   getAllWorks,
   getLikeCountsForWork,
   getAllWorksForHome,
+  getWriterWorks,
 } = require('../controllers/common.Controller');
 
 const router = new express.Router();
@@ -27,5 +28,8 @@ router.get('/genre', readAllGenre);
 
 // 작품의 좋아요 갯수
 router.get('/like/:workId', getLikeCountsForWork);
+
+// 작가홈 - 일반유저 및 기업유저
+router.get('/writer/:writerId', getWriterWorks);
 
 module.exports = router;

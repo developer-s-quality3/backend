@@ -164,6 +164,29 @@ const getLikeCountsForWork = async (req, res) => {
   }
 };
 
+// writer's home
+const getWriterWorks = async (req, res) => {
+  const { writerId } = req.params;
+  if (isNaN(writerId)) return res.status(400).send('writerId must be a number');
+
+  try {
+    const writerInfo = await User.findOne({
+      where: { id: writerId, userType: 'author' },
+      include: [
+        {
+          model: Work,
+          as: 'work',
+          attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
+        },
+      ],
+      attributes: ['id', 'authorName', 'authorDescription', 'authorAvatar'],
+    });
+    if (!writerInfo) return res.status(400).send('작가 정보가 없습니다');
+    return res.send(writerInfo);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 module.exports = {
   getAllWorks,
   readAllGenre,
@@ -171,4 +194,5 @@ module.exports = {
   getEpisodeImages,
   getLikeCountsForWork,
   getAllWorksForHome,
+  getWriterWorks,
 };
