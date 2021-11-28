@@ -8,21 +8,21 @@ const {
   GenreType,
   Like,
   Sequelize,
-} = require('../models');
+} = require("../models");
 
 const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
       where: {
-        status: 'regular',
+        status: "regular",
       },
       include: [
-        { model: User, as: 'user', attributes: ['authorName'] },
+        { model: User, as: "user", attributes: ["authorName"] },
         {
           model: GenreType,
-          as: 'genreType',
-          attributes: ['id'],
-          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
+          as: "genreType",
+          attributes: ["id"],
+          include: [{ model: Genre, as: "genre", attributes: ["id", "name"] }],
         },
         // {
         //   model: Like,
@@ -45,7 +45,7 @@ const getAllWorks = async (req, res) => {
         //     include: [{ model: View, as: 'view', attributes: ['views'] }],
         //   },
       ],
-      attributes: ['id', 'title', 'workThumbnail'],
+      attributes: ["id", "title", "workThumbnail"],
     });
     return res.send(works);
   } catch (error) {
@@ -69,17 +69,17 @@ const getEpisodes = async (req, res) => {
     const work = await Work.findOne({
       where: { id: workId },
       include: [
-        { model: Episode, as: 'episode' },
+        { model: Episode, as: "episode" },
         {
           model: User,
-          as: 'user',
-          attributes: ['authorName', 'authorDescription', 'authorAvatar'],
+          as: "user",
+          attributes: ["authorName", "authorDescription", "authorAvatar"],
         },
         {
           model: GenreType,
-          as: 'genreType',
-          attributes: ['id'],
-          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
+          as: "genreType",
+          attributes: ["id"],
+          include: [{ model: Genre, as: "genre", attributes: ["id", "name"] }],
         },
       ],
     });
@@ -129,7 +129,7 @@ const getLikeCountsForWork = async (req, res) => {
     }
     const likeCounts = await Like.findAll({
       attributes: [
-        [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
+        [Sequelize.fn("COUNT", Sequelize.col("workId")), "likedCounts"],
       ],
       where: { workId, isLike: true },
       raw: true,
