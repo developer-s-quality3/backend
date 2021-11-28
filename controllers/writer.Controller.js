@@ -3,13 +3,11 @@ const { User, Work, Episode, EpisodeImage, GenreType } = require('../models');
 const createWork = async (req, res) => {
   const parsedData = JSON.parse(req.body.workInfo);
 
-  const { userId, title, workDescription } = parsedData;
-
-  console.log(req.file);
+  const { title, workDescription } = parsedData;
 
   try {
     const work = await Work.create({
-      userId,
+      userId: req.user.userId,
       title,
       workThumbnail: req.file.location,
       workDescription,
