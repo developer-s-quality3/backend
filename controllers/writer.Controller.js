@@ -3,13 +3,11 @@ const { User, Work, Episode, EpisodeImage, GenreType } = require('../models');
 const createWork = async (req, res) => {
   const parsedData = JSON.parse(req.body.workInfo);
 
-  const { userId, title, workDescription } = parsedData;
-
-  console.log(req.file);
+  const { title, workDescription } = parsedData;
 
   try {
     const work = await Work.create({
-      userId,
+      userId: req.user.userId,
       title,
       workThumbnail: req.file.location,
       workDescription,
@@ -54,6 +52,23 @@ const getWorksForCreateEpisode = async (req, res) => {
       attributes: ['id', 'title'],
     });
     return res.send(works);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// 에피소드 등록할때 episodeOrder 보내주기
+const getEpisodeOrderNumber = async (req, res) => {
+  const { workId } = req.params;
+
+  try {
+    const work = await Work.findOne({
+      where: { id: workId },
+      include: [{ model: Episode, as: 'episode' }],
+      order: [[{ model: Episode, as: 'episode' }, 'episodeOrder', 'desc']],
+    });
+    if (!work.episode.length) return res.send({ episodeOrder: 0 });
+    return res.send(work.episode[0]);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -113,4 +128,5 @@ module.exports = {
   getAllWorks,
   createWork,
   getWorksForCreateEpisode,
+  getEpisodeOrderNumber,
 };
