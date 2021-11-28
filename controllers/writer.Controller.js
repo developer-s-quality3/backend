@@ -59,6 +59,23 @@ const getWorksForCreateEpisode = async (req, res) => {
   }
 };
 
+// 에피소드 등록할때 episodeOrder 보내주기
+const getEpisodeOrderNumber = async (req, res) => {
+  const { workId } = req.params;
+
+  try {
+    const work = await Work.findOne({
+      where: { id: workId },
+      include: [{ model: Episode, as: 'episode' }],
+      order: [[{ model: Episode, as: 'episode' }, 'episodeOrder', 'desc']],
+    });
+    if (!work.episode.length) return res.send({ episodeOrder: 0 });
+    return res.send(work.episode[0]);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const createEpisode = async (req, res) => {
   const parsedData = JSON.parse(req.body.episodeInfo);
 
@@ -113,4 +130,5 @@ module.exports = {
   getAllWorks,
   createWork,
   getWorksForCreateEpisode,
+  getEpisodeOrderNumber,
 };
