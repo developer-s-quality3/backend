@@ -118,8 +118,32 @@ const uploadEpisodeImages = async (req, res) => {
     throw new Error(error.message);
   }
 };
+
+const uploadAuthorBanner = async (req, res) => {
+  const { userId } = req.user;
+
+  if (!req.file) return res.status(400).send('이미지를 찾을 수 없습니다');
+
+  const authorBanner = req.file.location;
+
+  try {
+    const author = await User.update(
+      { authorBanner },
+      { where: { id: userId } }
+    );
+    return res.send(author);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 //에피소드 섬네일, 작품명, 에피소드명,  상태, 요청날짜
-//클릭시, 반려사유보내주기
+
+// 11-28
+// 관리자 - 홈 배너 추가 삭제 수정
+// 작가 - 홈 배너 추가 삭제 수정
+// 홈 - 작가명/작품명 검색
+// 클릭시, 반려사유보내주기
+
 // const getAllAppliedEpisodes
 
 module.exports = {
@@ -129,4 +153,5 @@ module.exports = {
   createWork,
   getWorksForCreateEpisode,
   getEpisodeOrderNumber,
+  uploadAuthorBanner,
 };

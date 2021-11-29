@@ -48,6 +48,9 @@ module.exports = {
       authorAvatar: {
         type: Sequelize.STRING,
       },
+      authorBanner: {
+        type: Sequelize.STRING,
+      },
       companyName: {
         type: Sequelize.CHAR,
       },

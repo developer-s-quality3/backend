@@ -6,6 +6,7 @@ const {
   uploadEpisodeImages,
   getWorksForCreateEpisode,
   getEpisodeOrderNumber,
+  uploadAuthorBanner,
 } = require('../controllers/writer.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -45,6 +46,14 @@ router.get(
   requireUser,
   userType('author'),
   getEpisodeOrderNumber
+);
+
+router.patch(
+  '/banner',
+  requireUser,
+  userType('author'),
+  upload.single('authorBanner'),
+  uploadAuthorBanner
 );
 
 module.exports = router;

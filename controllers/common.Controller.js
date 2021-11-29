@@ -86,7 +86,7 @@ const getEpisodes = async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['authorName', 'authorDescription', 'authorAvatar'],
+          attributes: ['authorName', 'authorDescription', 'authorAvatar', 'id'],
         },
         {
           model: GenreType,

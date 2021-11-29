@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       authorApprovedDate: DataTypes.DATE,
       authorDescription: DataTypes.CHAR,
       authorAvatar: DataTypes.STRING,
+      authorBanner: DataTypes.STRING,
       companyName: DataTypes.CHAR,
       companyLicenseNumber: DataTypes.CHAR,
       companyApprovedDate: DataTypes.DATE,
