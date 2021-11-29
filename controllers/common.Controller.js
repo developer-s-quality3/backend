@@ -15,12 +15,12 @@ const getAllWorksForHome = async (req, res) => {
   try {
     const works = await Work.findAll({
       where: {
-        status: 'regular',
+        status: "regular",
       },
       include: [
         {
           model: Like,
-          as: 'like',
+          as: "like",
           // attributes: {
           //   include: [
           //     [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
@@ -76,7 +76,7 @@ const getEpisodes = async (req, res) => {
   const { episodeOrder } = req.query;
   const { workId } = req.params;
   if (isNaN(workId))
-    return res.status(400).send('workId is required or must be a number');
+    return res.status(400).send("workId is required or must be a number");
 
   try {
     const work = await Work.findOne({
@@ -86,7 +86,7 @@ const getEpisodes = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["authorName", "authorDescription", "authorAvatar"],
+          attributes: ["authorName", "authorDescription", "authorAvatar", "id"],
         },
         {
           model: GenreType,
@@ -97,9 +97,9 @@ const getEpisodes = async (req, res) => {
       ],
       order: [
         [
-          { model: Episode, as: 'episode' },
-          'episodeOrder',
-          episodeOrder || 'desc',
+          { model: Episode, as: "episode" },
+          "episodeOrder",
+          episodeOrder || "desc",
         ],
       ],
     });
@@ -117,7 +117,7 @@ const getEpisodeImages = async (req, res) => {
     const episodeImages = await EpisodeImage.findAll({ where: { episodeId } });
 
     if (!episodeImages.length)
-      return res.status(400).send('에피소드 이미지가 없습니다');
+      return res.status(400).send("에피소드 이미지가 없습니다");
 
     const view = await View.findOrCreate({
       where: {
@@ -167,21 +167,21 @@ const getLikeCountsForWork = async (req, res) => {
 // writer's home
 const getWriterWorks = async (req, res) => {
   const { writerId } = req.params;
-  if (isNaN(writerId)) return res.status(400).send('writerId must be a number');
+  if (isNaN(writerId)) return res.status(400).send("writerId must be a number");
 
   try {
     const writerInfo = await User.findOne({
-      where: { id: writerId, userType: 'author' },
+      where: { id: writerId, userType: "author" },
       include: [
         {
           model: Work,
-          as: 'work',
-          attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
+          as: "work",
+          attributes: ["id", "title", "workThumbnail", "workDescription"],
         },
       ],
-      attributes: ['id', 'authorName', 'authorDescription', 'authorAvatar'],
+      attributes: ["id", "authorName", "authorDescription", "authorAvatar"],
     });
-    if (!writerInfo) return res.status(400).send('작가 정보가 없습니다');
+    if (!writerInfo) return res.status(400).send("작가 정보가 없습니다");
     return res.send(writerInfo);
   } catch (error) {
     throw new Error(error.message);
