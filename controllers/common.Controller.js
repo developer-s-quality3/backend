@@ -21,15 +21,6 @@ const getAllWorksForHome = async (req, res) => {
         {
           model: Like,
           as: 'like',
-          // attributes: {
-          //   include: [
-          //     [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
-          //   ],
-          //   where: {
-          //     isLike: true,
-          //   },
-          // },
-          // where: [{ isLike: true }],
         },
       ],
     });
@@ -37,6 +28,24 @@ const getAllWorksForHome = async (req, res) => {
   } catch (error) {
     throw new Error(error.message);
   }
+};
+
+// 작가 및 작품 검색
+const getWorksByAuthorOrWork = async (req, res) => {
+  let { authorName, workName } = req.query;
+
+  try {
+    const author = await User.findAll({
+      where: { authorName },
+    });
+
+    const works = await Work.findAll({
+      where: {
+        name: workName,
+      },
+    });
+    return res.send(works);
+  } catch (error) {}
 };
 
 // 전체만화
@@ -195,4 +204,5 @@ module.exports = {
   getLikeCountsForWork,
   getAllWorksForHome,
   getWriterWorks,
+  getWorksByAuthorOrWork,
 };
