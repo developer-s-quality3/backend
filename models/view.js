@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   View.init(
     {
       episodeId: { type: DataTypes.INTEGER, allowNull: false },
+      workId: { type: DataTypes.INTEGER, allowNull: false },
       views: { type: DataTypes.INTEGER, defaultValue: 0 },
     },
     {

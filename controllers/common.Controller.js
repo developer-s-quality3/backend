@@ -40,23 +40,26 @@ const getAllWorksForHome = async (req, res) => {
       include: {
         model: Episode,
         as: 'episode',
-        attributes: {
-          include: [
-            [
-              Sequelize.literal(`(
-               SELECT SUM(views)
-               FROM Views AS v
-               WHERE v.episodeId = episode.id
-             )`),
-              'viewCounts',
-            ],
-          ],
-        },
+        include: [{ model: View, as: 'view', attributes: ['views'] }],
       },
-
-      // order: [[Sequelize.literal('viewCounts'), 'asc']],
+      attributes: [
+        'id',
+        [
+          Sequelize.literal(`(SELECT SUM(views)
+          FROM Views AS v
+          WHERE v.workId = Work.id
+          )`),
+          'viewCounts',
+        ],
+      ],
+      order: [[Sequelize.literal('viewCounts'), 'desc']],
     });
-    return res.send({ worksHot, worksHighView });
+
+    const recentWork = await Work.findAll({
+      where: { status: 'regular' },
+      order: [['updatedAt', 'DESC']],
+    });
+    return res.send({ worksHot, worksHighView, recentWork });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -160,17 +163,29 @@ const getEpisodeImages = async (req, res) => {
   const { episodeId } = req.params;
 
   try {
-    const episodeImages = await EpisodeImage.findAll({ where: { episodeId } });
-
+    const episodeImages = await EpisodeImage.findAll({
+      where: { episodeId },
+      include: [
+        {
+          model: Episode,
+          as: 'episode',
+          include: [{ model: Work, as: 'work', attributes: ['id'] }],
+          attributes: ['id'],
+        },
+      ],
+    });
+    // console.log(episodeImages[0].episode.work.id);
     if (!episodeImages.length)
       return res.status(400).send('에피소드 이미지가 없습니다');
 
     const view = await View.findOrCreate({
       where: {
         episodeId,
+        workId: episodeImages[0].episode.work.id,
       },
       defaults: {
         episodeId,
+        workId: episodeImages[0].episode.work.id,
       },
     });
 

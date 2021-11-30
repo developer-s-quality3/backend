@@ -12,6 +12,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      workId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       views: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
