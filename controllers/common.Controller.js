@@ -37,25 +37,24 @@ const getAllWorksForHome = async (req, res) => {
     const worksHighView = await Work.findAll({
       where: { status: 'regular' },
 
-      include: [
-        {
-          model: Episode,
-          as: 'episode',
-
+      include: {
+        model: Episode,
+        as: 'episode',
+        attributes: {
           include: [
-            {
-              model: View,
-              as: 'view',
-            },
+            [
+              Sequelize.literal(`(
+               SELECT SUM(views)
+               FROM Views AS v
+               WHERE v.episodeId = episode.id
+             )`),
+              'viewCounts',
+            ],
           ],
         },
-      ],
-      // attributes: [
-      //   [
-      //     Sequelize.literal('SUM(views * `Episodes->Views`.views)'),
-      //     'viewCounts',
-      //   ],
-      // ],
+      },
+
+      // order: [[Sequelize.literal('viewCounts'), 'asc']],
     });
     return res.send({ worksHot, worksHighView });
   } catch (error) {
@@ -193,9 +192,10 @@ const getLikeCountsForWork = async (req, res) => {
   try {
     if (req.user) {
       // console.log(req.user);
-      userLikeStatus = await Like.findOne({
+      const user = await Like.findOne({
         where: { workId, userId: req.user.userId },
       });
+      userLikeStatus = user.isLike;
     }
     const likeCounts = await Like.findAll({
       attributes: [
