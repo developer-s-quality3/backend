@@ -260,6 +260,31 @@ const getWriterWorks = async (req, res) => {
     throw new Error(error.message);
   }
 };
+
+const getWorksByGenre = async (req, res) => {
+  const { genreId } = req.params;
+
+  try {
+    const worksOfGenre = await GenreType.findAll({
+      where: { genreId },
+      include: [
+        {
+          model: Work,
+          as: 'work',
+          attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
+          include: [
+            { model: User, as: 'user', attributes: ['id', 'authorName'] },
+          ],
+        },
+      ],
+      attributes: ['id'],
+    });
+    return res.send({ worksOfGenre });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   getAllWorks,
   readAllGenre,
@@ -269,4 +294,5 @@ module.exports = {
   getAllWorksForHome,
   getWriterWorks,
   getWorksByAuthorOrWork,
+  getWorksByGenre,
 };
