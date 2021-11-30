@@ -32,7 +32,13 @@ const getAllWorksForHome = async (req, res) => {
           ],
           order: [[Sequelize.literal('likeCounts'), 'DESC']],
         },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'authorName'],
+        },
       ],
+      attributes: ['id', 'workThumbnail', 'title'],
     });
     const worksHighView = await Work.findAll({
       where: { status: 'regular' },
@@ -42,8 +48,11 @@ const getAllWorksForHome = async (req, res) => {
         as: 'episode',
         include: [{ model: View, as: 'view', attributes: ['views'] }],
       },
+      include: [{ model: User, as: 'user', attributes: ['id', 'authorName'] }],
       attributes: [
         'id',
+        'workThumbnail',
+        'title',
         [
           Sequelize.literal(`(SELECT SUM(views)
           FROM Views AS v
@@ -58,6 +67,8 @@ const getAllWorksForHome = async (req, res) => {
     const recentWork = await Work.findAll({
       where: { status: 'regular' },
       order: [['updatedAt', 'DESC']],
+      include: [{ model: User, as: 'user', attributes: ['id', 'authorName'] }],
+      attributes: ['id', 'title', 'workThumbnail'],
     });
     return res.send({ worksHot, worksHighView, recentWork });
   } catch (error) {
