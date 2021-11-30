@@ -9,6 +9,7 @@ const {
   Like,
   Sequelize,
 } = require("../models");
+const { Op } = require("sequelize");
 
 // 홈
 const getAllWorksForHome = async (req, res) => {
@@ -21,15 +22,6 @@ const getAllWorksForHome = async (req, res) => {
         {
           model: Like,
           as: "like",
-          // attributes: {
-          //   include: [
-          //     [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
-          //   ],
-          //   where: {
-          //     isLike: true,
-          //   },
-          // },
-          // where: [{ isLike: true }],
         },
       ],
     });
@@ -41,20 +33,25 @@ const getAllWorksForHome = async (req, res) => {
 
 // 작가 및 작품 검색
 const getWorksByAuthorOrWork = async (req, res) => {
-  let { authorName, workName } = req.query;
-
+  let { searchInput } = req.query;
+  if (!searchInput.length) return res.status(400).send("검색어를 입력해주세요");
   try {
-    const author = await User.findAll({
-      where: { authorName },
+    const authors = await User.findAll({
+      where: { authorName: { [Op.like]: "%" + searchInput + "%" } },
+      attributes: ["id", "authorName", "authorAvatar", "authorDescription"],
     });
 
     const works = await Work.findAll({
       where: {
-        name: workName,
+        title: { [Op.like]: "%" + searchInput + "%" },
+        status: "regular",
       },
+      attributes: ["id", "title", "workThumbnail", "workDescription"],
     });
-    return res.send(works);
-  } catch (error) {}
+    return res.send({ authors, works });
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 // 전체만화
