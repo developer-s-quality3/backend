@@ -7,12 +7,16 @@ const {
   getLikeCountsForWork,
   getAllWorksForHome,
   getWriterWorks,
+  getWorksByAuthorOrWork,
 } = require('../controllers/common.Controller');
 
 const router = new express.Router();
 
 // 에피소드 가져오기
 router.get('/:workId/episode', getEpisodes);
+
+// 작가 및 작품 검색
+router.get('/search', getWorksByAuthorOrWork);
 
 // 해당 에피소드의 이미지 가져오기
 router.get('/episode/:episodeId', getEpisodeImages);
