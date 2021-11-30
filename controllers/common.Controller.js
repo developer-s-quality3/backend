@@ -195,7 +195,7 @@ const getLikeCountsForWork = async (req, res) => {
       const user = await Like.findOne({
         where: { workId, userId: req.user.userId },
       });
-      userLikeStatus = user.isLike;
+      if (user) userLikeStatus = user.isLike;
     }
     const likeCounts = await Like.findAll({
       attributes: [
