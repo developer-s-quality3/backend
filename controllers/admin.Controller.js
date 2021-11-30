@@ -266,7 +266,7 @@ const getOneAppliedEpisode = async (req, res) => {
 
 // update applied episodes
 const updateAppliedEpisodes = async (req, res) => {
-  const { episodeStatus, episodeId } = req.body;
+  const { episodeStatus, episodeId, workId } = req.body;
   if (episodeStatus !== 'approved' && episodeStatus !== 'declined')
     return res.status(400).send('status must be either approved || declined');
   try {
@@ -274,9 +274,18 @@ const updateAppliedEpisodes = async (req, res) => {
       { episodeStatus },
       { where: { id: episodeId } }
     );
+
     if (!episode[0])
-      return res.status(400).send('에피소드 상태 변경에 문제가 있습니다');
-    return res.send(episode);
+      return res.status(400).send('에피소드 상태 변경에 문제가 생겼습니다');
+
+    const work = await Work.update(
+      { status: 'regular' },
+      { where: { id: workId } }
+    );
+    if (!work[0])
+      return res.status(400).send('작품 상태 변경에 문제가 생겼습니다');
+
+    return res.send('승인되었습니다');
   } catch (error) {
     throw new Error(error.message);
   }
