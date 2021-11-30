@@ -208,7 +208,7 @@ const deleteGenre = async (req, res) => {
 const getAppliedEpisodes = async (req, res) => {
   try {
     const appliedEpisodes = await Work.findAll({
-      where: { status: 'regular' },
+      where: { status: 'pending' },
       include: [
         {
           model: Episode,

@@ -177,11 +177,6 @@ const likeToggleHandler = async (req, res) => {
   const { workId } = req.body;
 
   try {
-    // const like = await Like.findOrCreate({
-    //   where: { userId: req.user.userId, workId },
-    //   defaults: { userId: req.user.userId, workId, isLike: true },
-    // });
-
     const like = await Like.findOne({
       where: { userId: req.user.userId, workId },
     });
@@ -213,8 +208,27 @@ const getLikedWorkForUser = async (req, res) => {
 
   try {
     const likedWork = await Like.findAll({
-      include: [{ model: Work, as: 'work', where: { status: 'regular' } }],
-      // include: [{ model: Work, as: 'work' }],
+      include: [
+        {
+          model: Work,
+          as: 'work',
+          where: { status: 'regular' },
+          attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: [
+                'id',
+                'authorName',
+                'authorAvatar',
+                'authorDescription',
+              ],
+            },
+          ],
+        },
+      ],
+      attributes: ['id', 'isLike'],
       where: { userId, isLike: true },
     });
 
