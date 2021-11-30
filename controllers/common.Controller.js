@@ -8,7 +8,7 @@ const {
   GenreType,
   Like,
   Sequelize,
-} = require('../models');
+} = require("../models");
 
 // 홈
 const getAllWorksForHome = async (req, res) => {
@@ -20,9 +20,6 @@ const getAllWorksForHome = async (req, res) => {
       include: [
         {
           model: Like,
-<<<<<<< HEAD
-          as: 'like',
-=======
           as: "like",
           // attributes: {
           //   include: [
@@ -33,7 +30,6 @@ const getAllWorksForHome = async (req, res) => {
           //   },
           // },
           // where: [{ isLike: true }],
->>>>>>> affcea20042fbbb5f81c24664bf6cc42bf02dd21
         },
       ],
     });
@@ -66,18 +62,18 @@ const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
       where: {
-        status: 'regular',
+        status: "regular",
       },
       include: [
-        { model: User, as: 'user', attributes: ['authorName'] },
+        { model: User, as: "user", attributes: ["authorName"] },
         {
           model: GenreType,
-          as: 'genreType',
-          attributes: ['id'],
-          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
+          as: "genreType",
+          attributes: ["id"],
+          include: [{ model: Genre, as: "genre", attributes: ["id", "name"] }],
         },
       ],
-      attributes: ['id', 'title', 'workThumbnail'],
+      attributes: ["id", "title", "workThumbnail"],
     });
     return res.send(works);
   } catch (error) {
@@ -104,22 +100,17 @@ const getEpisodes = async (req, res) => {
     const work = await Work.findOne({
       where: { id: workId },
       include: [
-        { model: Episode, as: 'episode' },
+        { model: Episode, as: "episode" },
         {
           model: User,
-<<<<<<< HEAD
-          as: 'user',
-          attributes: ['authorName', 'authorDescription', 'authorAvatar', 'id'],
-=======
           as: "user",
           attributes: ["authorName", "authorDescription", "authorAvatar", "id"],
->>>>>>> affcea20042fbbb5f81c24664bf6cc42bf02dd21
         },
         {
           model: GenreType,
-          as: 'genreType',
-          attributes: ['id'],
-          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
+          as: "genreType",
+          attributes: ["id"],
+          include: [{ model: Genre, as: "genre", attributes: ["id", "name"] }],
         },
       ],
       order: [
@@ -179,7 +170,7 @@ const getLikeCountsForWork = async (req, res) => {
     }
     const likeCounts = await Like.findAll({
       attributes: [
-        [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
+        [Sequelize.fn("COUNT", Sequelize.col("workId")), "likedCounts"],
       ],
       where: { workId, isLike: true },
       raw: true,

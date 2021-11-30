@@ -1,4 +1,4 @@
-const { User, Work, Episode, EpisodeImage, GenreType } = require('../models');
+const { User, Work, Episode, EpisodeImage, GenreType } = require("../models");
 
 const createWork = async (req, res) => {
   const parsedData = JSON.parse(req.body.workInfo);
@@ -11,7 +11,7 @@ const createWork = async (req, res) => {
       title,
       workThumbnail: req.file.location,
       workDescription,
-      status: 'pending',
+      status: "pending",
     });
     const genreType = await GenreType.create({
       genreId: parsedData.genreId,
@@ -31,8 +31,13 @@ const getAllWorks = async (req, res) => {
       include: [
         {
           model: User,
-          as: 'user',
-          attributes: ['authorName', 'authorDescription', 'authorAvatar'],
+          as: "user",
+          attributes: [
+            "authorName",
+            "authorDescription",
+            "authorAvatar",
+            "authorBanner",
+          ],
         },
       ],
     });
@@ -49,7 +54,7 @@ const getWorksForCreateEpisode = async (req, res) => {
   try {
     const works = await Work.findAll({
       where: { userId },
-      attributes: ['id', 'title'],
+      attributes: ["id", "title"],
     });
     return res.send(works);
   } catch (error) {
@@ -64,8 +69,8 @@ const getEpisodeOrderNumber = async (req, res) => {
   try {
     const work = await Work.findOne({
       where: { id: workId },
-      include: [{ model: Episode, as: 'episode' }],
-      order: [[{ model: Episode, as: 'episode' }, 'episodeOrder', 'desc']],
+      include: [{ model: Episode, as: "episode" }],
+      order: [[{ model: Episode, as: "episode" }, "episodeOrder", "desc"]],
     });
     if (!work.episode.length) return res.send({ episodeOrder: 0 });
     return res.send(work.episode[0]);
@@ -92,7 +97,7 @@ const createEpisode = async (req, res) => {
     const episodeImagesDatas = episodeImages.map((file) => {
       return {
         episodeId: episode.id,
-        imageOrder: file.originalname.split('.')[0].split('_')[1],
+        imageOrder: file.originalname.split(".")[0].split("_")[1],
         imageUrl: file.location,
       };
     });
@@ -113,7 +118,7 @@ const uploadEpisodeImages = async (req, res) => {
 
   try {
     // const episodesImages = await EpisodeImage.create({});
-    res.send('test');
+    res.send("test");
   } catch (error) {
     throw new Error(error.message);
   }
@@ -122,7 +127,7 @@ const uploadEpisodeImages = async (req, res) => {
 const uploadAuthorBanner = async (req, res) => {
   const { userId } = req.user;
 
-  if (!req.file) return res.status(400).send('이미지를 찾을 수 없습니다');
+  if (!req.file) return res.status(400).send("이미지를 찾을 수 없습니다");
 
   const authorBanner = req.file.location;
 
