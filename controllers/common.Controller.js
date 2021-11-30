@@ -8,24 +8,56 @@ const {
   GenreType,
   Like,
   Sequelize,
-} = require("../models");
-const { Op } = require("sequelize");
+} = require('../models');
+const { Op } = require('sequelize');
 
 // 홈
 const getAllWorksForHome = async (req, res) => {
   try {
-    const works = await Work.findAll({
+    const worksHot = await Work.findAll({
       where: {
-        status: "regular",
+        status: 'regular',
       },
       include: [
         {
           model: Like,
-          as: "like",
+          as: 'like',
+          attributes: [
+            [
+              Sequelize.literal(
+                `(SELECT COUNT(*) FROM Likes WHERE Likes.isLike = true AND Likes.workId = Work.id)`
+              ),
+              'likeCounts',
+            ],
+          ],
+          order: [[Sequelize.literal('likeCounts'), 'DESC']],
         },
       ],
     });
-    return res.send(works);
+    const worksHighView = await Work.findAll({
+      where: { status: 'regular' },
+
+      include: [
+        {
+          model: Episode,
+          as: 'episode',
+
+          include: [
+            {
+              model: View,
+              as: 'view',
+            },
+          ],
+        },
+      ],
+      // attributes: [
+      //   [
+      //     Sequelize.literal('SUM(views * `Episodes->Views`.views)'),
+      //     'viewCounts',
+      //   ],
+      // ],
+    });
+    return res.send({ worksHot, worksHighView });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -34,19 +66,19 @@ const getAllWorksForHome = async (req, res) => {
 // 작가 및 작품 검색
 const getWorksByAuthorOrWork = async (req, res) => {
   let { searchInput } = req.query;
-  if (!searchInput.length) return res.status(400).send("검색어를 입력해주세요");
+  if (!searchInput.length) return res.status(400).send('검색어를 입력해주세요');
   try {
     const authors = await User.findAll({
-      where: { authorName: { [Op.like]: "%" + searchInput + "%" } },
-      attributes: ["id", "authorName", "authorAvatar", "authorDescription"],
+      where: { authorName: { [Op.like]: '%' + searchInput + '%' } },
+      attributes: ['id', 'authorName', 'authorAvatar', 'authorDescription'],
     });
 
     const works = await Work.findAll({
       where: {
-        title: { [Op.like]: "%" + searchInput + "%" },
-        status: "regular",
+        title: { [Op.like]: '%' + searchInput + '%' },
+        status: 'regular',
       },
-      attributes: ["id", "title", "workThumbnail", "workDescription"],
+      attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
     });
     return res.send({ authors, works });
   } catch (error) {
@@ -59,18 +91,18 @@ const getAllWorks = async (req, res) => {
   try {
     const works = await Work.findAll({
       where: {
-        status: "regular",
+        status: 'regular',
       },
       include: [
-        { model: User, as: "user", attributes: ["authorName"] },
+        { model: User, as: 'user', attributes: ['authorName'] },
         {
           model: GenreType,
-          as: "genreType",
-          attributes: ["id"],
-          include: [{ model: Genre, as: "genre", attributes: ["id", "name"] }],
+          as: 'genreType',
+          attributes: ['id'],
+          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
         },
       ],
-      attributes: ["id", "title", "workThumbnail"],
+      attributes: ['id', 'title', 'workThumbnail'],
     });
     return res.send(works);
   } catch (error) {
@@ -91,30 +123,30 @@ const getEpisodes = async (req, res) => {
   const { episodeOrder } = req.query;
   const { workId } = req.params;
   if (isNaN(workId))
-    return res.status(400).send("workId is required or must be a number");
+    return res.status(400).send('workId is required or must be a number');
 
   try {
     const work = await Work.findOne({
       where: { id: workId },
       include: [
-        { model: Episode, as: "episode" },
+        { model: Episode, as: 'episode' },
         {
           model: User,
-          as: "user",
-          attributes: ["authorName", "authorDescription", "authorAvatar", "id"],
+          as: 'user',
+          attributes: ['authorName', 'authorDescription', 'authorAvatar', 'id'],
         },
         {
           model: GenreType,
-          as: "genreType",
-          attributes: ["id"],
-          include: [{ model: Genre, as: "genre", attributes: ["id", "name"] }],
+          as: 'genreType',
+          attributes: ['id'],
+          include: [{ model: Genre, as: 'genre', attributes: ['id', 'name'] }],
         },
       ],
       order: [
         [
-          { model: Episode, as: "episode" },
-          "episodeOrder",
-          episodeOrder || "desc",
+          { model: Episode, as: 'episode' },
+          'episodeOrder',
+          episodeOrder || 'desc',
         ],
       ],
     });
@@ -132,7 +164,7 @@ const getEpisodeImages = async (req, res) => {
     const episodeImages = await EpisodeImage.findAll({ where: { episodeId } });
 
     if (!episodeImages.length)
-      return res.status(400).send("에피소드 이미지가 없습니다");
+      return res.status(400).send('에피소드 이미지가 없습니다');
 
     const view = await View.findOrCreate({
       where: {
@@ -167,7 +199,7 @@ const getLikeCountsForWork = async (req, res) => {
     }
     const likeCounts = await Like.findAll({
       attributes: [
-        [Sequelize.fn("COUNT", Sequelize.col("workId")), "likedCounts"],
+        [Sequelize.fn('COUNT', Sequelize.col('workId')), 'likedCounts'],
       ],
       where: { workId, isLike: true },
       raw: true,
@@ -182,21 +214,21 @@ const getLikeCountsForWork = async (req, res) => {
 // writer's home
 const getWriterWorks = async (req, res) => {
   const { writerId } = req.params;
-  if (isNaN(writerId)) return res.status(400).send("writerId must be a number");
+  if (isNaN(writerId)) return res.status(400).send('writerId must be a number');
 
   try {
     const writerInfo = await User.findOne({
-      where: { id: writerId, userType: "author" },
+      where: { id: writerId, userType: 'author' },
       include: [
         {
           model: Work,
-          as: "work",
-          attributes: ["id", "title", "workThumbnail", "workDescription"],
+          as: 'work',
+          attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
         },
       ],
-      attributes: ["id", "authorName", "authorDescription", "authorAvatar"],
+      attributes: ['id', 'authorName', 'authorDescription', 'authorAvatar'],
     });
-    if (!writerInfo) return res.status(400).send("작가 정보가 없습니다");
+    if (!writerInfo) return res.status(400).send('작가 정보가 없습니다');
     return res.send(writerInfo);
   } catch (error) {
     throw new Error(error.message);

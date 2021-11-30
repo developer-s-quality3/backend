@@ -7,6 +7,7 @@ const {
   getWorksForCreateEpisode,
   getEpisodeOrderNumber,
   uploadAuthorBanner,
+  getAllEpisodesFromWriterHome,
 } = require('../controllers/writer.Controller');
 const { requireUser } = require('../middleware/requireUser');
 const { userType } = require('../middleware/userType');
@@ -40,6 +41,12 @@ router.get(
 );
 
 router.get('/work', requireUser, userType('author'), getAllWorks);
+router.get(
+  '/work/:workId',
+  requireUser,
+  userType('author'),
+  getAllEpisodesFromWriterHome
+);
 
 router.get(
   '/work/:workId/episodeOrder',
