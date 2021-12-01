@@ -103,9 +103,8 @@ const getWorksByAuthorOrWork = async (req, res) => {
 const getAllWorks = async (req, res) => {
   const { genreId } = req.query;
 
-  let works;
   try {
-    works = await Work.findAll({
+    const works = await Work.findAll({
       where: {
         status: 'regular',
         [Op.and]: [genreId && { '$genreType.genre.id$': genreId }],
@@ -193,11 +192,24 @@ const getEpisodeImages = async (req, res) => {
           model: Episode,
           as: 'episode',
           include: [{ model: Work, as: 'work', attributes: ['id'] }],
-          attributes: ['id'],
+          attributes: ['id', 'episodeOrder'],
         },
       ],
     });
-    // console.log(episodeImages[0].episode.work.id);
+    // console.log(episodeImages[0].episode.episodeOrder);
+    const nextEpisodeInfo = await Episode.findOne({
+      where: {
+        workId: episodeImages[0].episode.work.id,
+        episodeOrder: episodeImages[0].episode.episodeOrder + 1,
+      },
+    });
+    const prevEpisodeInfo = await Episode.findOne({
+      where: {
+        workId: episodeImages[0].episode.work.id,
+        episodeOrder: episodeImages[0].episode.episodeOrder - 1,
+      },
+    });
+
     if (!episodeImages.length)
       return res.status(400).send('에피소드 이미지가 없습니다');
 
@@ -216,7 +228,12 @@ const getEpisodeImages = async (req, res) => {
 
     const counted = await view[0].update({ views: count + 1 });
 
-    return res.send({ episodeImages, count: counted });
+    return res.send({
+      episodeImages,
+      prevEpisodeInfo,
+      nextEpisodeInfo,
+      count: counted,
+    });
   } catch (error) {
     throw new Error(error.message);
   }

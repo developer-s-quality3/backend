@@ -35,7 +35,7 @@ router.get('/genre', readAllGenre);
 router.get('/like/:workId', getLikeCountsForWork);
 
 // 작가홈 - 일반유저 및 기업유저
-router.get('/writer/:writerId', getWriterWorks);
+router.get('/author/:writerId', getWriterWorks);
 
 // 장르별 작품가져오기
 router.get('/works/:genreId', getWorksByGenre);
