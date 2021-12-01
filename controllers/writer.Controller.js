@@ -1,4 +1,11 @@
-const { User, Work, Episode, EpisodeImage, GenreType } = require('../models');
+const {
+  User,
+  Work,
+  Episode,
+  EpisodeImage,
+  GenreType,
+  Genre,
+} = require('../models');
 
 const createWork = async (req, res) => {
   const parsedData = JSON.parse(req.body.workInfo);
