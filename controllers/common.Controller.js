@@ -153,7 +153,7 @@ const getEpisodes = async (req, res) => {
     const work = await Work.findOne({
       where: { id: workId },
       include: [
-        { model: Episode, as: 'episode' },
+        { model: Episode, as: 'episode', where: { episodeStatus: 'approved' } },
         {
           model: User,
           as: 'user',
