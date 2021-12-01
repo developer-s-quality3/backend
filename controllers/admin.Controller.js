@@ -6,7 +6,7 @@ const {
   EpisodeImage,
   Genre,
 } = require('../models');
-
+const { Op } = require('sequelize');
 // user type change application
 const getAllApplication = async (req, res) => {
   // DESC ASC
@@ -208,7 +208,7 @@ const deleteGenre = async (req, res) => {
 const getAppliedEpisodes = async (req, res) => {
   try {
     const appliedEpisodes = await Work.findAll({
-      where: { status: 'pending' },
+      where: { [Op.or]: [{ status: 'pending' }, { status: 'regular' }] },
       include: [
         {
           model: Episode,
