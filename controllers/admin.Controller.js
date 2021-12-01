@@ -278,12 +278,14 @@ const updateAppliedEpisodes = async (req, res) => {
     if (!episode[0])
       return res.status(400).send('에피소드 상태 변경에 문제가 생겼습니다');
 
-    const work = await Work.update(
-      { status: 'regular' },
-      { where: { id: workId } }
-    );
-    if (!work[0])
-      return res.status(400).send('작품 상태 변경에 문제가 생겼습니다');
+    if (workId) {
+      const work = await Work.update(
+        { status: 'regular' },
+        { where: { id: workId } }
+      );
+      if (!work[0])
+        return res.status(400).send('작품 상태 변경에 문제가 생겼습니다');
+    }
 
     return res.send('승인되었습니다');
   } catch (error) {
