@@ -53,7 +53,7 @@ const getAllEpisodesFromWriterHome = async (req, res) => {
 
   try {
     const episodes = await Work.findAll({
-      where: { id: workId, userId: req.user.userId, status: 'regular' },
+      where: { id: workId, userId: req.user.userId },
       include: [{ model: Episode, as: 'episode' }],
     });
     return res.send(episodes);
