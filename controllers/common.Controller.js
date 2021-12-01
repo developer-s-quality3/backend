@@ -102,56 +102,32 @@ const getWorksByAuthorOrWork = async (req, res) => {
 // 전체만화
 const getAllWorks = async (req, res) => {
   const { genreId } = req.query;
+
   let works;
   try {
-    if (genreId) {
-      works = await Work.findAll({
-        where: {
-          status: 'regular',
-          '$genreType.genre.id$': genreId,
-        },
-        include: [
-          { model: User, as: 'user', attributes: ['authorName'] },
-          {
-            model: GenreType,
-            as: 'genreType',
-            attributes: ['id'],
+    works = await Work.findAll({
+      where: {
+        status: 'regular',
+        [Op.and]: [genreId && { '$genreType.genre.id$': genreId }],
+      },
+      include: [
+        { model: User, as: 'user', attributes: ['authorName'] },
+        {
+          model: GenreType,
+          as: 'genreType',
+          attributes: ['id'],
 
-            include: [
-              {
-                model: Genre,
-                as: 'genre',
-                attributes: ['id', 'name'],
-              },
-            ],
-          },
-        ],
-        attributes: ['id', 'title', 'workThumbnail'],
-      });
-    } else {
-      works = await Work.findAll({
-        where: {
-          status: 'regular',
+          include: [
+            {
+              model: Genre,
+              as: 'genre',
+              attributes: ['id', 'name'],
+            },
+          ],
         },
-        include: [
-          { model: User, as: 'user', attributes: ['authorName'] },
-          {
-            model: GenreType,
-            as: 'genreType',
-            attributes: ['id'],
-
-            include: [
-              {
-                model: Genre,
-                as: 'genre',
-                attributes: ['id', 'name'],
-              },
-            ],
-          },
-        ],
-        attributes: ['id', 'title', 'workThumbnail'],
-      });
-    }
+      ],
+      attributes: ['id', 'title', 'workThumbnail'],
+    });
 
     return res.send(works);
   } catch (error) {
