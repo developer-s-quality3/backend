@@ -54,7 +54,14 @@ const getAllEpisodesFromWriterHome = async (req, res) => {
   try {
     const episodes = await Work.findOne({
       where: { id: workId, userId: req.user.userId },
-      include: [{ model: Episode, as: 'episode' }],
+      include: [
+        { model: Episode, as: 'episode' },
+        {
+          model: GenreType,
+          as: 'genreType',
+          include: [{ model: Genre, as: 'genre' }],
+        },
+      ],
     });
     return res.send(episodes);
   } catch (error) {
