@@ -213,7 +213,13 @@ const getLikedWorkForUser = async (req, res) => {
           model: Work,
           as: 'work',
           where: { status: 'regular' },
-          attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
+          attributes: [
+            'id',
+            'title',
+            'workThumbnail',
+            'workDescription',
+            'updatedAt',
+          ],
           include: [
             {
               model: User,
