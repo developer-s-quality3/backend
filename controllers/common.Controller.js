@@ -195,6 +195,21 @@ const getEpisodes = async (req, res) => {
           episodeOrder || 'desc',
         ],
       ],
+      attributes: [
+        'id',
+        'status',
+        'title',
+        'workThumbnail',
+        'workDescription',
+        'createdAt',
+        'updatedAt',
+        [
+          Sequelize.literal(
+            `(SELECT COUNT(*) FROM Episodes WHERE Episodes.workId = Work.id)`
+          ),
+          'episodeCounts',
+        ],
+      ],
     });
 
     return res.send(work);
