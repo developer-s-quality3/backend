@@ -69,6 +69,7 @@ const getAllEpisodesFromWriterHome = async (req, res) => {
           include: [{ model: Genre, as: 'genre' }],
         },
       ],
+      order: [[{ model: Episode, as: 'episode' }, 'episodeOrder', 'desc']],
     });
     return res.send(episodes);
   } catch (error) {
