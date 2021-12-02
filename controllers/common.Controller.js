@@ -55,7 +55,15 @@ const getAllWorksForHome = async (req, res) => {
         as: 'episode',
         include: [{ model: View, as: 'view', attributes: ['views'] }],
       },
-      include: [{ model: User, as: 'user', attributes: ['id', 'authorName'] }],
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'authorName'] },
+        {
+          model: GenreType,
+          as: 'genreType',
+          attributes: ['id'],
+          include: { model: Genre, as: 'genre', attributes: ['id', 'name'] },
+        },
+      ],
       attributes: [
         'id',
         'workThumbnail',
@@ -74,7 +82,15 @@ const getAllWorksForHome = async (req, res) => {
     const recentWork = await Work.findAll({
       where: { status: 'regular' },
       order: [['updatedAt', 'DESC']],
-      include: [{ model: User, as: 'user', attributes: ['id', 'authorName'] }],
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'authorName'] },
+        {
+          model: GenreType,
+          as: 'genreType',
+          attributes: ['id'],
+          include: { model: Genre, as: 'genre', attributes: ['id', 'name'] },
+        },
+      ],
       attributes: ['id', 'title', 'workThumbnail'],
     });
     return res.send({ worksHot, worksHighView, recentWork });
@@ -201,6 +217,7 @@ const getEpisodeImages = async (req, res) => {
           attributes: ['id', 'episodeOrder'],
         },
       ],
+      order: [[Sequelize.literal('imageOrder'), 'asc']],
     });
     // console.log(episodeImages[0].episode.episodeOrder);
     const nextEpisodeInfo = await Episode.findOne({
