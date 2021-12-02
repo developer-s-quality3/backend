@@ -319,7 +319,13 @@ const getWriterWorks = async (req, res) => {
           attributes: ['id', 'title', 'workThumbnail', 'workDescription'],
         },
       ],
-      attributes: ['id', 'authorName', 'authorDescription', 'authorAvatar'],
+      attributes: [
+        'id',
+        'authorName',
+        'authorDescription',
+        'authorAvatar',
+        'authorBanner',
+      ],
     });
     if (!writerInfo) return res.status(400).send('작가 정보가 없습니다');
     return res.send(writerInfo);
