@@ -5,6 +5,7 @@ const {
   EpisodeImage,
   GenreType,
   Genre,
+  Sequelize,
 } = require('../models');
 
 const createWork = async (req, res) => {
@@ -62,12 +63,31 @@ const getAllEpisodesFromWriterHome = async (req, res) => {
     const episodes = await Work.findOne({
       where: { id: workId, userId: req.user.userId },
       include: [
-        { model: Episode, as: 'episode' },
+        {
+          model: Episode,
+          as: 'episode',
+        },
+
         {
           model: GenreType,
           as: 'genreType',
           include: [{ model: Genre, as: 'genre' }],
         },
+      ],
+      attributes: [
+        'id',
+        'status',
+        'title',
+        'workThumbnail',
+        'workDescription',
+        'createdAt',
+        'updatedAt',
+        [
+          Sequelize.literal(
+            `(SELECT COUNT(*) FROM Episodes WHERE Episodes.workId = Work.id)`
+          ),
+          'episodeCounts',
+        ],
       ],
       order: [[{ model: Episode, as: 'episode' }, 'episodeOrder', 'desc']],
     });
