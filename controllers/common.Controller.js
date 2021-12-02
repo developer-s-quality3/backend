@@ -23,6 +23,7 @@ const getAllWorksForHome = async (req, res) => {
           model: Like,
           as: 'like',
           attributes: [
+            'id',
             [
               Sequelize.literal(
                 `(SELECT COUNT(*) FROM Likes WHERE Likes.isLike = true AND Likes.workId = Work.id)`
@@ -36,6 +37,12 @@ const getAllWorksForHome = async (req, res) => {
           model: User,
           as: 'user',
           attributes: ['id', 'authorName'],
+        },
+        {
+          model: GenreType,
+          as: 'genreType',
+          attributes: ['id'],
+          include: { model: Genre, as: 'genre', attributes: ['id', 'name'] },
         },
       ],
       attributes: ['id', 'workThumbnail', 'title'],
@@ -115,7 +122,6 @@ const getAllWorks = async (req, res) => {
           model: GenreType,
           as: 'genreType',
           attributes: ['id'],
-
           include: [
             {
               model: Genre,
