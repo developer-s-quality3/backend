@@ -205,7 +205,7 @@ const getEpisodes = async (req, res) => {
         'updatedAt',
         [
           Sequelize.literal(
-            `(SELECT COUNT(*) FROM Episodes WHERE Episodes.workId = Work.id)`
+            `(SELECT COUNT(*) FROM Episodes WHERE Episodes.workId = Work.id AND Episodes.episodeStatus = approved)`
           ),
           'episodeCounts',
         ],
