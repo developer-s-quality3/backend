@@ -19,20 +19,21 @@ const getAllWorksForHome = async (req, res) => {
         status: 'regular',
       },
       include: [
-        {
-          model: Like,
-          as: 'like',
-          attributes: [
-            'id',
-            [
-              Sequelize.literal(
-                `(SELECT COUNT(*) FROM Likes WHERE Likes.isLike = true AND Likes.workId = Work.id)`
-              ),
-              'likeCounts',
-            ],
-          ],
-          order: [[Sequelize.literal('likeCounts'), 'DESC']],
-        },
+        // {
+        //   model: Like,
+        //   as: 'like',
+        //   attributes: ['id'],
+        //   // attributes: [
+        //   //   'id',
+        //   //   [
+        //   //     Sequelize.literal(
+        //   //       `(SELECT SUM COUNT(*) FROM Likes WHERE Likes.isLike = true AND Likes.workId = Work.id)`
+        //   //     ),
+        //   //     'likeCounts',
+        //   //   ],
+        //   // ],
+        //   // order: [[Sequelize.literal('likeCounts'), 'DESC']],
+        // },
         {
           model: User,
           as: 'user',
@@ -45,7 +46,19 @@ const getAllWorksForHome = async (req, res) => {
           include: { model: Genre, as: 'genre', attributes: ['id', 'name'] },
         },
       ],
-      attributes: ['id', 'workThumbnail', 'title'],
+      // attributes: ['id', 'workThumbnail', 'title'],
+      attributes: [
+        'id',
+        'workThumbnail',
+        'title',
+        [
+          Sequelize.literal(
+            `(SELECT COUNT(*) FROM Likes WHERE Likes.isLike = true AND Likes.workId = Work.id)`
+          ),
+          'likeCounts',
+        ],
+      ],
+      order: [[Sequelize.literal('likeCounts'), 'DESC']],
     });
     const worksHighView = await Work.findAll({
       where: { status: 'regular' },
